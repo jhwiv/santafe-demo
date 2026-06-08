@@ -12,18 +12,18 @@
 <meta name="description" content="Anonymized demo of a curated 7-night Santa Fe trip companion app — adobe, art, altitude, and great food. Built by Barrier Island Digital." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png?v=20260608-bc2fbaf" />
-<link rel="preload" as="image" href="img/hero.jpg?v=20260608-bc2fbaf" fetchpriority="high" />
-<link rel="manifest" href="manifest.webmanifest?v=20260608-bc2fbaf" />
-<link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png?v=20260608-bc2fbaf" />
-<link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png?v=20260608-bc2fbaf" />
+<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png?v=20260608-577ed06" />
+<link rel="preload" as="image" href="img/hero.jpg?v=20260608-577ed06" fetchpriority="high" />
+<link rel="manifest" href="manifest.webmanifest?v=20260608-577ed06" />
+<link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png?v=20260608-577ed06" />
+<link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png?v=20260608-577ed06" />
 <meta name="apple-mobile-web-app-capable" content="yes" />
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 <meta name="apple-mobile-web-app-title" content="Santa Fe" />
 <meta name="theme-color" content="#0f1d33" />
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="styles.css?v=20260608-bc2fbaf" />
-<link rel="stylesheet" href="assets/restaurants/restaurants.css?v=20260608-bc2fbaf" />
+<link rel="stylesheet" href="styles.css?v=20260608-577ed06" />
+<link rel="stylesheet" href="assets/restaurants/restaurants.css?v=20260608-577ed06" />
 </head>
 <body>
 
@@ -978,7 +978,7 @@
   <p class="footer-sub">A sample build by Barrier Island Digital, LLC</p>
   <div class="footer-brand">
     <span class="footer-brand-eyebrow">Powered by</span>
-    <img class="footer-brand-mark" src="img/brand-wordmark.png?v=20260608-bc2fbaf" alt="Barrier Island Digital, LLC" width="1100" height="295" loading="lazy" decoding="async" />
+    <img class="footer-brand-mark" src="img/brand-wordmark.png?v=20260608-577ed06" alt="Barrier Island Digital, LLC" width="1100" height="295" loading="lazy" decoding="async" />
   </div>
 </footer>
 
@@ -1842,7 +1842,7 @@
 <div id="a2hs" class="a2hs" hidden>
   <div class="a2hs-card">
     <button class="a2hs-x" id="a2hs-dismiss" aria-label="Dismiss">×</button>
-    <div class="a2hs-icon"><img src="img/apple-touch-icon.png?v=20260608-bc2fbaf" alt="" width="56" height="56" /></div>
+    <div class="a2hs-icon"><img src="img/apple-touch-icon.png?v=20260608-577ed06" alt="" width="56" height="56" /></div>
     <div class="a2hs-body">
       <p class="a2hs-kicker" id="a2hs-kicker">Out of office</p>
       <h3 class="a2hs-title" id="a2hs-title">Make Santa Fe feel like an app</h3>
@@ -2332,7 +2332,7 @@
   import {
     mountDiningTab,
     mountReservationTimeline,
-  } from "./assets/restaurants/restaurants.js?v=20260608-bc2fbaf";
+  } from "./assets/restaurants/restaurants.js?v=20260608-577ed06";
 
   const STORAGE_KEY = 'santafe-itinerary-restaurants';
 
@@ -2343,7 +2343,7 @@
 
     let dataset;
     try {
-      const res = await fetch("./assets/restaurants/santa-fe.json?v=20260608-bc2fbaf");
+      const res = await fetch("./assets/restaurants/santa-fe.json?v=20260608-577ed06");
       if (!res.ok) throw new Error('santa-fe.json HTTP ' + res.status);
       dataset = await res.json();
     } catch (err) {

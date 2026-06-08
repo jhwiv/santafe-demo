@@ -17,7 +17,7 @@
 // pipeline updates the date+hash so old caches get cleaned up on activate.
 // IMPORTANT: bump this on every deploy. The auto-cache-bust workflow also
 // rewrites the date+hash below so SW reinstalls + repopulates the cache.
-const CACHE_VERSION = 'santafe-shell-20260608-bc2fbaf';
+const CACHE_VERSION = 'santafe-shell-20260608-577ed06';
 
 // Precache the bare asset paths (no ?v= querystring). The fetch handler
 // matches with `ignoreSearch: true` so any cache-busted querystring still
