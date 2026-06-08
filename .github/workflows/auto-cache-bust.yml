@@ -1,0 +1,85 @@
+name: Auto cache-bust on deploy
+
+# Stamps every ?v=YYYYMMDD<letter> query string in index.html with the current
+# commit SHA whenever something is pushed to main, then commits the change
+# back. Cloudflare Pages then deploys index.html with fresh asset URLs, so
+# browsers and PWAs never serve a stale styles.css / image / manifest.
+#
+# Created 2026-05-25 after a real-world incident where the live site served
+# the old broken OpenTable links from cache even after main was updated.
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - '.github/workflows/auto-cache-bust.yml'  # don't loop on self-edits
+
+permissions:
+  contents: write
+
+jobs:
+  bust:
+    runs-on: ubuntu-latest
+    # Skip the auto-commit's own push to prevent infinite loops
+    if: "!contains(github.event.head_commit.message, '[skip cache-bust]')"
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Use a token that can push back to main
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 1
+
+      - name: Compute version stamp
+        id: stamp
+        run: |
+          # Format: YYYYMMDD-<short SHA>  (e.g. 20260525-99c4bc1)
+          STAMP="$(date -u +%Y%m%d)-${GITHUB_SHA::7}"
+          echo "stamp=$STAMP" >> "$GITHUB_OUTPUT"
+          echo "Using cache-buster: $STAMP"
+
+      - name: Rewrite ?v=... in index.html AND CACHE_VERSION in sw.js
+        run: |
+          # 1) Replace every ?v=<...> in index.html
+          # 2) Bump CACHE_VERSION in sw.js to match — this forces the SW to
+          #    reinstall, wipe old caches, and re-precache fresh assets on
+          #    every deploy. Without this, the SW serves stale JS/CSS even
+          #    after the page asks for the new ?v= URL.
+          python3 - <<'PY'
+          import re, os
+          stamp = os.environ["STAMP"]
+
+          # index.html
+          with open("index.html", "r", encoding="utf-8") as f:
+              html = f.read()
+          new_html, n = re.subn(r"\?v=[^\"'&\s<>)]+", f"?v={stamp}", html)
+          with open("index.html", "w", encoding="utf-8") as f:
+              f.write(new_html)
+          print(f"index.html: rewrote {n} cache-buster occurrence(s) to v={stamp}")
+
+          # sw.js — bump CACHE_VERSION so the SW reinstalls
+          if os.path.exists("sw.js"):
+              with open("sw.js", "r", encoding="utf-8") as f:
+                  sw = f.read()
+              new_sw, m = re.subn(
+                  r"const\s+CACHE_VERSION\s*=\s*['\"]santafe-shell-[^'\"]+['\"]",
+                  f"const CACHE_VERSION = 'santafe-shell-{stamp}'",
+                  sw,
+              )
+              with open("sw.js", "w", encoding="utf-8") as f:
+                  f.write(new_sw)
+              print(f"sw.js: updated CACHE_VERSION ({m} replacement) to santafe-shell-{stamp}")
+          PY
+        env:
+          STAMP: ${{ steps.stamp.outputs.stamp }}
+
+      - name: Commit & push if changed
+        run: |
+          if git diff --quiet index.html sw.js; then
+            echo "No cache-buster changes — nothing to commit."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html sw.js
+          git commit -m "chore: cache-bust to v=${{ steps.stamp.outputs.stamp }} [skip cache-bust]"
+          git push

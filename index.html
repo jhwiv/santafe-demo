@@ -1,0 +1,2746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0f1d33" />
+<!-- Force a fresh HTML check every load. GitHub Pages serves max-age=600 which can stick old code on mobile for many minutes. -->
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>Santa Fe Itinerary — Case Study · Barrier Island Digital</title>
+<meta name="description" content="Anonymized demo of a curated 7-night Santa Fe trip companion app — adobe, art, altitude, and great food. Built by Barrier Island Digital." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="apple-touch-icon" sizes="180x180" href="img/apple-touch-icon.png?v=20260608-e5b1510" />
+<link rel="preload" as="image" href="img/hero.jpg?v=20260608-e5b1510" fetchpriority="high" />
+<link rel="manifest" href="manifest.webmanifest?v=20260608-e5b1510" />
+<link rel="icon" type="image/png" sizes="192x192" href="img/icon-192.png?v=20260608-e5b1510" />
+<link rel="icon" type="image/png" sizes="512x512" href="img/icon-512.png?v=20260608-e5b1510" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Santa Fe" />
+<meta name="theme-color" content="#0f1d33" />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="styles.css?v=20260608-e5b1510" />
+<link rel="stylesheet" href="assets/restaurants/restaurants.css?v=20260608-e5b1510" />
+</head>
+<body>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="hero-img" role="img" aria-label="Adobe rooftops and the Sangre de Cristo mountains at dusk"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="kicker">
+      <span class="kicker-agency">Sample Itinerary · Case Study</span>
+      <span class="kicker-sep">·</span>
+      <span class="kicker-traveler">Sample Guest</span>
+    </p>
+    <h1>Santa Fe</h1>
+    <p class="subtitle">Adobe, art, altitude &amp; great food</p>
+    <p class="dates">3 — 10 JUNE 2026</p>
+    <div class="trip-meter" id="trip-meter" aria-live="polite">
+      <div class="meter-cell meter-countdown" id="meter-countdown">
+        <span class="meter-num" id="meter-num">—</span>
+        <span class="meter-lbl" id="meter-lbl">until departure</span>
+      </div>
+      <div class="meter-cell meter-clock">
+        <span class="meter-num meter-clock-num" id="meter-clock">—</span>
+        <span class="meter-lbl">Santa Fe local time</span>
+      </div>
+    </div>
+    <div class="hero-cta">
+      <a href="#tab-condensed" class="btn" data-tab-link="condensed">Explore the Itinerary</a>
+      <a href="#tab-essentials" class="btn btn-ghost" data-tab-link="essentials">View Essentials</a>
+      <a href="#tab-packing" class="btn btn-ghost" data-tab-link="packing">Packing List</a>
+    </div>
+
+    <!-- REQUEST BOX — type a quick note, opens mail to the planner. Always visible on hero. -->
+    <aside class="req-box req-box-hero" aria-label="Request a change">
+      <div class="req-head">
+        <span class="req-eyebrow">Need a change?</span>
+        <span class="req-sub">Type a quick note — I'll get it the moment you send.</span>
+      </div>
+      <form class="req-form" id="req-form" novalidate>
+        <label class="sr-only" for="req-text">What would you like changed or added?</label>
+        <textarea id="req-text" class="req-text" rows="2" placeholder="e.g. Add Meow Wolf Tue at 2 PM" required></textarea>
+        <button type="submit" class="req-send">Send request</button>
+      </form>
+      <p class="req-status" id="req-status" aria-live="polite"></p>
+    </aside>
+  </div>
+  <!-- Floating flight card — appears on flight days from T-24h until final landing -->
+  <aside class="hero-flight-card" id="hero-flight-card" hidden aria-label="Today's flight status">
+    <div class="hfc-head">
+      <span class="hfc-eyebrow" id="hfc-eyebrow">Travel day</span>
+      <a href="#tab-logistics" class="hfc-deeplink" data-tab-link="logistics">Full details ↗</a>
+    </div>
+    <div class="hfc-flights" id="hfc-flights">
+      <!-- legs populated by JS -->
+    </div>
+    <p class="hfc-foot" id="hfc-foot"><span id="hfc-foot-msg">Checking live status…</span><span id="hfc-foot-stamp"></span><button type="button" class="hfc-refresh" id="hfc-refresh" hidden aria-label="Refresh flight status">↻ Refresh</button></p>
+  </aside>
+  <div class="hero-scroll" aria-hidden="true">SCROLL ↓</div>
+</header>
+
+<!-- TAB NAVIGATION -->
+<nav class="tabnav" aria-label="Itinerary navigation">
+  <div class="tabnav-row" role="navigation" aria-label="Days">
+    <button class="tab tab-view" data-view="condensed" aria-current="page" id="t-condensed">Condensed</button>
+    <a class="tab tab-day" href="#day-wed" data-day="wed" id="t-wed"><span class="tab-day-label">Wed</span><span class="tab-date">Jun 3</span></a>
+    <a class="tab tab-day" href="#day-thu" data-day="thu" id="t-thu"><span class="tab-day-label">Thu</span><span class="tab-date">Jun 4</span></a>
+    <a class="tab tab-day" href="#day-fri" data-day="fri" id="t-fri"><span class="tab-day-label">Fri</span><span class="tab-date">Jun 5</span></a>
+    <a class="tab tab-day" href="#day-sat" data-day="sat" id="t-sat"><span class="tab-day-label">Sat</span><span class="tab-date">Jun 6</span></a>
+    <a class="tab tab-day" href="#day-sun" data-day="sun" id="t-sun"><span class="tab-day-label">Sun</span><span class="tab-date">Jun 7</span></a>
+    <a class="tab tab-day" href="#day-mon" data-day="mon" id="t-mon"><span class="tab-day-label">Mon</span><span class="tab-date">Jun 8</span></a>
+    <a class="tab tab-day" href="#day-tue" data-day="tue" id="t-tue"><span class="tab-day-label">Tue</span><span class="tab-date">Jun 9</span></a>
+  </div>
+  <div class="tabnav-row" role="tablist" aria-label="Reference views">
+    <button class="tab tab-view" role="tab" data-view="essentials" id="t-essentials">Essentials</button>
+    <button class="tab tab-view" role="tab" data-view="logistics" id="t-logistics">Flights &amp; Hotel</button>
+    <button class="tab tab-view" role="tab" data-view="dining" id="t-dining">Dining</button>
+    <button class="tab tab-view" role="tab" data-view="activities" id="t-activities">Activities</button>
+    <button class="tab tab-view" role="tab" data-view="packing" id="t-packing">Packing List</button>
+  </div>
+</nav>
+
+<main class="tab-main">
+
+  <!-- CONDENSED -->
+  <section class="tab-panel" role="tabpanel" data-panel="condensed" aria-labelledby="t-condensed" id="tab-condensed" hidden>
+    <p class="eyebrow">At a Glance</p>
+    <h2 class="display">Condensed Itinerary</h2>
+    <p class="lede">Seven nights at the Inn on the Alameda. Galleries, cliff dwellings, a Plaza walking tour, a sip-and-savor afternoon, a dawn balloon ride, and quietly indulgent dinners along Canyon Road.</p>
+
+    <div class="cond-group">
+      <h3 class="cond-head"><span class="cond-flag">🏜️</span> WED 3 · ARRIVAL &amp; PLAZA</h3>
+      <div class="cond-row"><span class="cond-time">7:00a</span><span>AVL → DFW · AA 3006</span></div>
+      <div class="cond-row"><span class="cond-time">3:45p</span><span>DFW → SAF · AA 6295 · Seat TBD</span></div>
+      <div class="cond-row"><span class="cond-time">4:00p</span><span>Check in · Inn on the Alameda</span></div>
+      <div class="cond-row"><span class="cond-time">5:00p</span><span>Wander the Plaza or Canyon Road galleries</span></div>
+      <div class="cond-row cond-dinner" data-cond-date="2026-06-03" role="button" tabindex="0" aria-label="Dinner pick for Wed Jun 3 — opens in Dining"><span class="cond-time">7:00p</span><span class="cond-rest-slot"></span></div>
+    </div>
+
+    <div class="cond-group">
+      <h3 class="cond-head"><span class="cond-flag">🪨</span> THU 4 · CLIFFS &amp; CANYON ROAD</h3>
+      <div class="cond-row"><span class="cond-time">8:00 AM</span><a href="#tab-activities" data-tab-link="activities" class="cond-rest">Bandelier &amp; Puye Cliffs <span class="cond-addr">· La Fonda pickup</span></a><a class="cond-viator" href="https://vigilanteguides.com" target="_blank" rel="noopener" aria-label="Vigilante Guides website (new tab)">Vigilante ↗</a></div>
+      <div class="cond-row cond-dinner" data-cond-date="2026-06-04" role="button" tabindex="0" aria-label="Dinner pick for Thu Jun 4 — opens in Dining"><span class="cond-time">7:00p</span><span class="cond-rest-slot"></span></div>
+    </div>
+
+    <div class="cond-group">
+      <h3 class="cond-head"><span class="cond-flag">⛪</span> FRI 5 · WALKING TOUR</h3>
+      <div class="cond-row"><span class="cond-time">1:00p</span><a href="#tab-activities" data-tab-link="activities" class="cond-rest">Best of Santa Fe Walking Tour <span class="cond-addr">· Soldiers’ Monument</span></a><a class="cond-viator" href="https://www.viator.com/tours/Santa-Fe/The-Best-of-Santa-Fe-Walking-Tour/d22369-469662P1" target="_blank" rel="noopener" aria-label="Open Walking Tour on Viator (new tab)">Viator ↗</a></div>
+      <div class="cond-row cond-dinner" data-cond-date="2026-06-05" role="button" tabindex="0" aria-label="Dinner pick for Fri Jun 5 — opens in Dining"><span class="cond-time">7:00p</span><span class="cond-rest-slot"></span></div>
+    </div>
+
+    <div class="cond-group">
+      <h3 class="cond-head"><span class="cond-flag">🎨</span> SAT 6 · CANYON ROAD ART &amp; HISTORY</h3>
+      <div class="cond-row"><span class="cond-time">2:00p</span><a href="#tab-activities" data-tab-link="activities" class="cond-rest">Canyon Road Art &amp; History Tour <span class="cond-addr">· Wiford Gallery</span></a><a class="cond-viator" href="https://www.viator.com/tours/Santa-Fe/Canyon-Road-Quickie/d22369-44321P3" target="_blank" rel="noopener" aria-label="Open Canyon Road tour on Viator (new tab)">Viator ↗</a></div>
+      <div class="cond-row cond-dinner" data-cond-date="2026-06-06" role="button" tabindex="0" aria-label="Dinner pick for Sat Jun 6 — opens in Dining"><span class="cond-time">7:00p</span><span class="cond-rest-slot"></span></div>
+    </div>
+
+    <div class="cond-group">
+      <h3 class="cond-head"><span class="cond-flag">🌶️</span> SUN 7 · SIP &amp; SAVOR</h3>
+      <div class="cond-row"><span class="cond-time">1:00p</span><a href="#tab-activities" data-tab-link="activities" class="cond-rest">Original Wander NM "Sip &amp; Savor" <span class="cond-addr">· NW Plaza corner</span></a><a class="cond-viator" href="https://www.viator.com/tours/Santa-Fe/Santa-Fe-Sip-and-Savor-Food-Tour/d22369-44288P2" target="_blank" rel="noopener" aria-label="Open Sip and Savor tour on Viator (new tab)">Viator ↗</a></div>
+      <div class="cond-row cond-dinner" data-cond-date="2026-06-07" role="button" tabindex="0" aria-label="Dinner pick for Sun Jun 7 — opens in Dining"><span class="cond-time">7:00p</span><span class="cond-rest-slot"></span></div>
+    </div>
+
+    <div class="cond-group">
+      <h3 class="cond-head"><span class="cond-flag">🗿</span> MON 8 · FOOD TOUR + SCULPTURE GARDENS</h3>
+      <div class="cond-row"><span class="cond-time">10:45a</span><a href="#tab-activities" data-tab-link="activities" class="cond-rest">New Mexican Flavors Food Tour <span class="cond-addr">· Santa Fe Plaza</span></a></div>
+      <div class="cond-row"><span class="cond-time" style="background:#fff4d6;color:#7a5a00;">verify</span><a href="#tab-activities" data-tab-link="activities" class="cond-rest">Allan Houser Sculpture Gardens <span class="cond-addr">· call to confirm Mon time</span></a></div>
+      <div class="cond-row cond-dinner" data-cond-date="2026-06-08" role="button" tabindex="0" aria-label="Dinner pick for Mon Jun 8 — opens in Dining"><span class="cond-time">7:00p</span><span class="cond-rest-slot"></span></div>
+    </div>
+
+    <div class="cond-group">
+      <h3 class="cond-head"><span class="cond-flag">🎈</span> TUE 9 · DAWN BALLOON · FAREWELL</h3>
+      <div class="cond-row"><span class="cond-time">4:30a</span><a href="#tab-activities" data-tab-link="activities" class="cond-rest">Balloon Above New Mexico <span class="cond-addr">· 600 N Guadalupe</span></a><a class="cond-viator" href="https://www.viator.com/tours/Santa-Fe/Hot-Air-Balloon-Rides-Tours-in-Santa-Fe-NM-area-May-thru-Oct/d22369-474082P1" target="_blank" rel="noopener" aria-label="Open Balloon tour on Viator (new tab)">Viator ↗</a></div>
+      <div class="cond-row"><span class="cond-time">2:00p</span><a href="#tab-activities" data-tab-link="activities" class="cond-rest">Meow Wolf · House of Eternal Return <span class="cond-addr">· 1352 Rufina Cir</span></a></div>
+      <div class="cond-row cond-dinner" data-cond-date="2026-06-09" role="button" tabindex="0" aria-label="Dinner pick for Tue Jun 9 — opens in Dining"><span class="cond-time">7:00p</span><span class="cond-rest-slot"></span></div>
+    </div>
+
+    <div class="cond-group">
+      <h3 class="cond-head"><span class="cond-flag">✈️</span> WED 10 · DEPARTURE</h3>
+      <div class="cond-row"><span class="cond-time">12:00p</span><span>Check out · Inn on the Alameda</span></div>
+      <div class="cond-row"><span class="cond-time">12:58p</span><span>SAF → DFW · AA 6299</span></div>
+      <div class="cond-row"><span class="cond-time">7:55p</span><span>DFW → AVL · AA 0379 · arr 11:09 PM</span></div>
+    </div>
+  </section><!-- /condensed -->
+
+  <!-- DAY FEED — all 7 days stacked, continuously scrollable -->
+  <div id="day-feed">
+  <section class="day-section" data-day="wed" data-day-date="2026-06-03" aria-labelledby="t-wed" id="day-wed">
+    <p class="eyebrow">Day 1 · Wednesday</p>
+    <h2 class="display">Arrival &amp; the Plaza</h2>
+
+    <div class="weather" data-weather-date="2026-06-03">
+      <div class="weather-top">
+        <div class="weather-hi" data-weather-hi>82°<span class="weather-unit">F</span></div>
+        <div class="weather-meta">
+          <div class="weather-cond" data-weather-cond>Mostly sunny</div>
+          <div class="weather-low" data-weather-low>Low 51° · Sunrise 4:48a · Sunset 9:10p · Moon 92% waning gibbous</div>
+        </div>
+      </div>
+      <p class="weather-tip">Travel day — pack a light layer for arrival; June dusk at 7,200 ft drops fast.</p>
+    </div>
+
+    <div class="history-blurb">
+      <p class="history-eyebrow">A note on the Plaza</p>
+      <p class="history-text">Santa Fe was founded in 1609–1610 by Don Pedro de Peralta on the Pueblo ruin of <em>O'Ga P'Ogeh</em> — "White Shell Water Place" — making it the oldest capital city in the United States. The Plaza you'll wander tonight has been the city's beating heart for over four centuries.</p>
+    </div>
+
+    <div class="day-item">
+      <p class="day-label">Morning</p>
+      <p>Fly AVL → DFW → SAF (connection rebooked on AA 6295). Land 4:43 PM at Santa Fe Municipal (SAF), 15 min from the hotel.</p>
+    </div>
+    <div class="day-item">
+      <p class="day-label">Afternoon</p>
+      <p>Check in at Inn on the Alameda from 4:00 PM. Wander the Plaza or stroll Canyon Road's gallery district at your own pace — both are walkable from the inn.</p>
+    </div>
+    <div class="day-item">
+      <p class="day-label">Dinner · 7:00 PM</p>
+      <div class="rest-card-wrap is-empty" data-day-date="2026-06-03" role="button" tabindex="0" aria-label="Choose a restaurant for this night in the Dining tab">
+        <div class="rest-empty-prompt">
+          <span class="rest-empty-eyebrow">No dinner picked yet</span>
+          <span class="rest-empty-cta">Choose in Dining →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY: THU -->
+  <section class="day-section" data-day="thu" data-day-date="2026-06-04" aria-labelledby="t-thu" id="day-thu">
+    <p class="eyebrow">Day 2 · Thursday</p>
+    <h2 class="display">Cliffs &amp; Canyon Road</h2>
+
+    <div class="weather" data-weather-date="2026-06-04">
+      <div class="weather-top">
+        <div class="weather-hi" data-weather-hi>83°<span class="weather-unit">F</span></div>
+        <div class="weather-meta">
+          <div class="weather-cond" data-weather-cond>Sunny · dry</div>
+          <div class="weather-low" data-weather-low>Low 50° · Sunrise 4:48a · Sunset 9:11p · Moon 85% waning gibbous</div>
+        </div>
+      </div>
+      <p class="weather-tip">High-UV day on exposed cliff terrain — SPF 50, wide-brim hat, 2L water minimum.</p>
+    </div>
+
+    <div class="history-blurb">
+      <p class="history-eyebrow">A note on Bandelier</p>
+      <p class="history-text">Bandelier takes its name from Adolph Bandelier, the Swiss-born scholar who in 1880 first documented the Ancestral Puebloan cliff dwellings of Frijoles Canyon. The carved-tuff homes you'll climb to today were built and lived in between roughly 1150 and 1550 CE — a vertical neighborhood older than most European cities.</p>
+    </div>
+
+    <div class="day-item">
+      <p class="day-label">Daytime · Confirmed</p>
+      <p><strong>Bandelier &amp; Puye Cliffs</strong> driving tour with Vigilante Guides — 8:00 AM pickup at La Fonda, lunch included, returns mid-afternoon.</p>
+      <p class="muted-line"><a href="#tab-activities" data-tab-link="activities" class="link-gold">See full prep notes →</a></p>
+    </div>
+    <div class="day-item">
+      <p class="day-label">Dinner · 7:00 PM</p>
+      <div class="rest-card-wrap is-empty" data-day-date="2026-06-04" role="button" tabindex="0" aria-label="Choose a restaurant for this night in the Dining tab">
+        <div class="rest-empty-prompt">
+          <span class="rest-empty-eyebrow">No dinner picked yet</span>
+          <span class="rest-empty-cta">Choose in Dining →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY: FRI -->
+  <section class="day-section" data-day="fri" data-day-date="2026-06-05" aria-labelledby="t-fri" id="day-fri">
+    <p class="eyebrow">Day 3 · Friday</p>
+    <h2 class="display">Plaza Walking Tour</h2>
+
+    <div class="weather" data-weather-date="2026-06-05">
+      <div class="weather-top">
+        <div class="weather-hi" data-weather-hi>84°<span class="weather-unit">F</span></div>
+        <div class="weather-meta">
+          <div class="weather-cond" data-weather-cond>Sunny · light breeze</div>
+          <div class="weather-low" data-weather-low>Low 52° · Sunrise 4:47a · Sunset 9:12p · Moon 77% waning gibbous</div>
+        </div>
+      </div>
+      <p class="weather-tip">Cool start, warm midday. Wear walking shoes; the Plaza tour covers ~1.5 mi of cobblestones and adobe.</p>
+    </div>
+
+    <div class="history-blurb">
+      <p class="history-eyebrow">A note on the Palace of the Governors</p>
+      <p class="history-text">Your walking tour begins at the oldest continuously occupied public building in the United States — built ca. 1610 and the only Spanish colonial structure spared in the 1680 Pueblo Revolt, when allied Indigenous nations drove 2,500 Spaniards out of New Mexico. Don Diego de Vargas led the bloodless reconquest twelve years later.</p>
+    </div>
+
+    <div class="day-item">
+      <p class="day-label">Afternoon · 1:00 PM · Paid</p>
+      <p><strong>Best of Santa Fe Walking Tour</strong> · Viator BR —————————— · 1:00 PM · 2–2.5 hours · meet at Soldiers’ Monument on the Plaza by 12:50 PM. Palace of the Governors, Cathedral Basilica of St. Francis, the Plaza, and the surrounding adobe neighborhood.</p>
+      <p class="muted-line"><a href="#tab-activities" data-tab-link="activities" class="link-gold">See full prep notes →</a></p>
+    </div>
+    <div class="day-item">
+      <p class="day-label">Dinner · 7:00 PM</p>
+      <div class="rest-card-wrap is-empty" data-day-date="2026-06-05" role="button" tabindex="0" aria-label="Choose a restaurant for this night in the Dining tab">
+        <div class="rest-empty-prompt">
+          <span class="rest-empty-eyebrow">No dinner picked yet</span>
+          <span class="rest-empty-cta">Choose in Dining →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY: SAT -->
+  <section class="day-section" data-day="sat" data-day-date="2026-06-06" aria-labelledby="t-sat" id="day-sat">
+    <p class="eyebrow">Day 4 · Saturday</p>
+    <h2 class="display">Canyon Road Art &amp; History</h2>
+
+    <div class="weather" data-weather-date="2026-06-06">
+      <div class="weather-top">
+        <div class="weather-hi" data-weather-hi>85°<span class="weather-unit">F</span></div>
+        <div class="weather-meta">
+          <div class="weather-cond" data-weather-cond>Sunny · slight haze</div>
+          <div class="weather-low" data-weather-low>Low 53° · Sunrise 4:47a · Sunset 9:13p · Moon 68% waning gibbous</div>
+        </div>
+      </div>
+      <p class="weather-tip">Galleries are walkable from the inn — no Uber needed. Patio dinner under Loretto Chapel is the evening highlight.</p>
+    </div>
+
+    <div class="history-blurb">
+      <p class="history-eyebrow">A note on Canyon Road</p>
+      <p class="history-text">Canyon Road began as an Indigenous trail leading up into the Sangre de Cristos. Its oldest surviving houses date to the 1750s, and the <em>Acequia Madre</em> — the mother irrigation ditch dug just after Santa Fe's founding — still murmurs alongside it. The art colony arrived around 1904, when painters came west for tuberculosis cures at Sunmount Sanatorium and never left.</p>
+    </div>
+
+    <div class="day-item">
+      <p class="day-label">Afternoon · 2:00 PM · Paid</p>
+      <p><strong>Canyon Road Art &amp; History Tour</strong> · Viator BR —————————— · meet at Wiford Gallery (403 Canyon Rd) by 1:50 PM · ~2 hrs. Deep dive on the gallery district a 12-min walk from the inn.</p>
+      <p class="muted-line"><a href="#tab-activities" data-tab-link="activities" class="link-gold">See full prep notes →</a></p>
+    </div>
+    <div class="day-item">
+      <p class="day-label">Dinner · 7:00 PM</p>
+      <div class="rest-card-wrap is-empty" data-day-date="2026-06-06" role="button" tabindex="0" aria-label="Choose a restaurant for this night in the Dining tab">
+        <div class="rest-empty-prompt">
+          <span class="rest-empty-eyebrow">No dinner picked yet</span>
+          <span class="rest-empty-cta">Choose in Dining →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY: SUN -->
+  <section class="day-section" data-day="sun" data-day-date="2026-06-07" aria-labelledby="t-sun" id="day-sun">
+    <p class="eyebrow">Day 5 · Sunday</p>
+    <h2 class="display">Sip &amp; Savor</h2>
+
+    <div class="weather" data-weather-date="2026-06-07">
+      <div class="weather-top">
+        <div class="weather-hi" data-weather-hi>86°<span class="weather-unit">F</span></div>
+        <div class="weather-meta">
+          <div class="weather-cond" data-weather-cond>Mostly sunny · warm</div>
+          <div class="weather-low" data-weather-low>Low 54° · Sunrise 4:46a · Sunset 9:14p · Moon 60% waning gibbous</div>
+        </div>
+      </div>
+      <p class="weather-tip">Sunday note: Luminaria is closed — Coyote Cafe is the move, with The Compound as a quieter Canyon Road alternative.</p>
+    </div>
+
+    <div class="history-blurb">
+      <p class="history-eyebrow">A note on Santa Fe wine country</p>
+      <p class="history-text">New Mexico is the oldest wine-growing region in the United States — Franciscan friars planted the first vines along the Rio Grande in 1629, more than 150 years before California saw a vineyard. Today's Sip &amp; Savor tasting is, in a quiet way, the continuation of a four-hundred-year experiment in high-desert viticulture.</p>
+    </div>
+
+    <div class="day-item">
+      <p class="day-label">Afternoon · 1:00 PM · Paid</p>
+      <p><strong>Original Wander New Mexico "Sip &amp; Savor"</strong> · Viator BR —————————— · meet at the First National Bank ATM, 62 Lincoln Ave (NW corner of the Plaza) by 12:50 PM · 4 hrs, 4 stops. Hosted afternoon of local tastings.</p>
+      <p class="muted-line"><a href="#tab-activities" data-tab-link="activities" class="link-gold">See full prep notes →</a></p>
+    </div>
+    <div class="day-item">
+      <p class="day-label">Dinner · 7:00 PM</p>
+      <div class="rest-card-wrap is-empty" data-day-date="2026-06-07" role="button" tabindex="0" aria-label="Choose a restaurant for this night in the Dining tab">
+        <div class="rest-empty-prompt">
+          <span class="rest-empty-eyebrow">No dinner picked yet</span>
+          <span class="rest-empty-cta">Choose in Dining →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY: MON -->
+  <section class="day-section" data-day="mon" data-day-date="2026-06-08" aria-labelledby="t-mon" id="day-mon">
+    <p class="eyebrow">Day 6 · Monday</p>
+    <h2 class="display">Sculpture Gardens</h2>
+
+    <div class="weather" data-weather-date="2026-06-08">
+      <div class="weather-top">
+        <div class="weather-hi" data-weather-hi>85°<span class="weather-unit">F</span></div>
+        <div class="weather-meta">
+          <div class="weather-cond" data-weather-cond>Sunny · breezy PM</div>
+          <div class="weather-low" data-weather-low>Low 54° · Sunrise 4:45a · Sunset 9:15p · Moon 50% last quarter</div>
+        </div>
+      </div>
+      <p class="weather-tip">Houser visit is outdoors and by appointment after 2 PM — sunglasses essential at altitude.</p>
+    </div>
+
+    <div class="history-blurb">
+      <p class="history-eyebrow">A note on Allan Houser</p>
+      <p class="history-text">Allan Houser (Haozous), Chiricahua Apache, was the first child in his family born outside captivity since Geronimo's 1886 surrender — his father Sam had been Geronimo's translator. In 1992 he became the first Native American to receive the National Medal of Arts. The monumental bronzes you'll walk among today were nearly all cast on this ranch.</p>
+    </div>
+
+    <div class="day-item">
+      <p class="day-label">Morning · 10:45 AM – 1:15 PM · Paid</p>
+      <p><strong>New Mexican Flavors Tour of Santa Fe Plaza</strong> · Food Tour New Mexico · Booking #353908763 · meet on the Santa Fe Plaza. Guided walking food tour through Plaza-area kitchens — chile, heritage grains, local artisans. <a class="link-gold" href="https://www.google.com/maps/search/?api=1&amp;query=Santa+Fe+Plaza,+Santa+Fe,+NM+87501" target="_blank" rel="noopener">Open in Google Maps ↗</a></p>
+      <p class="muted-line"><a href="#tab-activities" data-tab-link="activities" class="link-gold">See full prep notes →</a></p>
+    </div>
+    <div class="day-item">
+      <p class="day-label">Afternoon · Verify time · Paid</p>
+      <p><strong>Allan Houser Sculpture Gardens &amp; Gallery</strong> · Viator BR —————————— · 26 Haozous Rd (25 min south). <strong>Call (505) 471-1528 to confirm — the gallery normally runs tours Tue/Thu/Sat only and your booking is on Monday.</strong> Monumental bronzes on a quiet desert ranch.</p>
+      <p class="muted-line"><a href="#tab-activities" data-tab-link="activities" class="link-gold">See full prep notes →</a></p>
+    </div>
+    <div class="day-item">
+      <p class="day-label">Dinner · 7:00 PM</p>
+      <div class="rest-card-wrap is-empty" data-day-date="2026-06-08" role="button" tabindex="0" aria-label="Choose a restaurant for this night in the Dining tab">
+        <div class="rest-empty-prompt">
+          <span class="rest-empty-eyebrow">No dinner picked yet</span>
+          <span class="rest-empty-cta">Choose in Dining →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DAY: TUE -->
+  <section class="day-section" data-day="tue" data-day-date="2026-06-09" aria-labelledby="t-tue" id="day-tue">
+    <p class="eyebrow">Day 7 · Tuesday</p>
+    <h2 class="display">Dawn Balloon &amp; Farewell</h2>
+
+    <div class="weather" data-weather-date="2026-06-09">
+      <div class="weather-top">
+        <div class="weather-hi" data-weather-hi>84°<span class="weather-unit">F</span></div>
+        <div class="weather-meta">
+          <div class="weather-cond" data-weather-cond>Calm dawn · PM cloud build-up</div>
+          <div class="weather-low" data-weather-low>Low 53° · Sunrise 4:45a · Sunset 9:16p · Moon 39% waning crescent</div>
+        </div>
+      </div>
+      <p class="weather-tip">Dawn launch needs calm air — dress warm (40s°F aloft). Slight monsoon risk by late afternoon; PM plans flex.</p>
+    </div>
+
+    <div class="history-blurb">
+      <p class="history-eyebrow">A note on the Rio Grande</p>
+      <p class="history-text">The dawn balloon drifts above the Rio Grande Valley — the river the Tewa called <em>P'osoge</em>, "big river," long before the Spanish renamed it. At this altitude (7,200 ft and climbing), the sunrise hits the Sangre de Cristos — "Blood of Christ" mountains — minutes before it reaches the city below. A fitting last view of New Mexico.</p>
+    </div>
+
+    <div class="day-item">
+      <p class="day-label">Pre-dawn · 4:30 AM meet · Paid</p>
+      <p><strong>Balloon Above New Mexico</strong> · Viator BR —————————— · leave the inn by 4:15 AM · meet at 600 N Guadalupe St (white Ford Expedition) · hotel pickup also available. 1–1.5 hour flight above the Rio Grande Valley.</p>
+      <p class="muted-line"><a href="#tab-activities" data-tab-link="activities" class="link-gold">See full prep notes →</a></p>
+    </div>
+    <div class="day-item">
+      <p class="day-label">Afternoon · 2:00 PM · ~75 min</p>
+      <p><strong>Meow Wolf · House of Eternal Return</strong> · 1352 Rufina Cir (~10 min drive from the Inn). Immersive 70-room art installation — plan 2–3 hours inside. Arrive 10–15 min early to pick up tickets at the box office. <a class="link-gold" href="https://www.google.com/maps/search/?api=1&amp;query=1352+Rufina+Cir,+Santa+Fe,+NM+87507" target="_blank" rel="noopener">Open in Google Maps ↗</a></p>
+      <p class="muted-line"><a href="#tab-activities" data-tab-link="activities" class="link-gold">See full prep notes →</a></p>
+    </div>
+    <div class="day-item">
+      <p class="day-label">Dinner · 7:00 PM</p>
+      <div class="rest-card-wrap is-empty" data-day-date="2026-06-09" role="button" tabindex="0" aria-label="Choose a restaurant for this night in the Dining tab">
+        <div class="rest-empty-prompt">
+          <span class="rest-empty-eyebrow">No dinner picked yet</span>
+          <span class="rest-empty-cta">Choose in Dining →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div><!-- /day-feed -->
+
+  <!-- ESSENTIALS -->
+  <section class="tab-panel" role="tabpanel" data-panel="essentials" aria-labelledby="t-essentials" id="tab-essentials" hidden>
+    <p class="eyebrow">Essentials</p>
+    <h2 class="display">Trip basics.</h2>
+    <div class="ess-grid">
+      <div class="ess-card"><span class="ess-label">Traveler</span><span class="ess-val">Sample Guest</span></div>
+      <div class="ess-card"><span class="ess-label">Built by</span><span class="ess-val">Barrier Island Digital</span></div>
+      <div class="ess-card"><span class="ess-label">Trip Locator</span><span class="ess-val mono">——————</span></div>
+      <div class="ess-card"><span class="ess-label">Airline Ref</span><span class="ess-val mono">——————</span></div>
+      <div class="ess-card"><span class="ess-label">Hotel Conf</span><span class="ess-val mono">#————————</span></div>
+      <div class="ess-card"><span class="ess-label">Cancellation</span><span class="ess-val">24 hr · hotel</span></div>
+      <div class="ess-card"><span class="ess-label">Altitude</span><span class="ess-val">7,200 ft</span></div>
+      <div class="ess-card"><span class="ess-label">Activities Paid</span><span class="ess-val">$948.00</span></div>
+    </div>
+    <h3 class="grouphead">Reservation Timeline</h3>
+    <p class="timeline-intro">Booking lead times for every paid experience and dinner reservation, sorted by urgency. Best-restaurant tables in Santa Fe — especially on Canyon Road — fill 4–6 weeks ahead in June.</p>
+    <ul class="timeline-list">
+      <li class="timeline-row tl-urgent">
+        <span class="tl-badge">Book now</span>
+        <div class="tl-body">
+          <p class="tl-name">Geronimo · Fri Jun 5 &amp; Mon Jun 8, 7:00 PM</p>
+          <p class="tl-note">Two Canyon Road seatings. OpenTable is currently showing no online June availability — <strong>call (505) 982-1500</strong> to book, or try <a class="link-gold" href="https://www.opentable.com/geronimo-santa-fe" target="_blank" rel="noopener">OpenTable</a> for last-minute openings. Mon Jun 8 keeps the relaxed late-night window (kitchen until 11 PM) before Tuesday's farewell.</p>
+        </div>
+      </li>
+      <li class="timeline-row tl-urgent">
+        <span class="tl-badge">Book now</span>
+        <div class="tl-body">
+          <p class="tl-name">The Compound · Thu Jun 4, 7:00 PM</p>
+          <p class="tl-note">Chef Mark Kiffin's flagship; patio tables go first. <strong>The Compound is on Resy, not OpenTable</strong> — book via <a class="link-gold" href="https://resy.com/cities/santa-fe-nm/venues/the-compound-restaurant" target="_blank" rel="noopener">Resy</a> or call (505) 982-4353. Also available as the Mon Jun 8 backup — last seating 7:30 PM, so book early.</p>
+        </div>
+      </li>
+      <li class="timeline-row tl-done">
+        <span class="tl-badge">Confirmed</span>
+        <div class="tl-body">
+          <p class="tl-name">Bandelier &amp; Puye Cliffs (Vigilante Guides) · Thu Jun 4, 8:00 AM — La Fonda pickup</p>
+          <p class="tl-note">Booking #—————— · sample paid. <strong>To do: sign the waiver</strong> in your operator confirmation email.</p>
+        </div>
+      </li>
+      <li class="timeline-row tl-soon">
+        <span class="tl-badge">4–6 weeks out</span>
+        <div class="tl-body">
+          <p class="tl-name">Anasazi Restaurant · Wed Jun 3, 7:00 PM</p>
+          <p class="tl-note">Inside Rosewood Inn of the Anasazi. <a class="link-gold" href="https://www.opentable.com/r/anasazi-restaurant-reservations-santa-fe" target="_blank" rel="noopener">OpenTable</a> or (505) 988-3030.</p>
+        </div>
+      </li>
+      <li class="timeline-row tl-soon">
+        <span class="tl-badge">4–6 weeks out</span>
+        <div class="tl-body">
+          <p class="tl-name">Luminaria · Sat Jun 6 &amp; Tue Jun 9 (farewell), 7:00 PM</p>
+          <p class="tl-note">Two seatings at Inn &amp; Spa at Loretto. Request a patio table under the chapel for the farewell. <a class="link-gold" href="https://www.opentable.com/luminaria-restaurant-and-patio" target="_blank" rel="noopener">OpenTable</a> or (505) 984-2400.</p>
+        </div>
+      </li>
+      <li class="timeline-row tl-soon">
+        <span class="tl-badge">4–6 weeks out</span>
+        <div class="tl-body">
+          <p class="tl-name">Coyote Cafe Rooftop Cantina · Sun Jun 7, 7:00 PM</p>
+          <p class="tl-note"><strong>OpenTable books the main Cafe only — the Rooftop Cantina is walk-in.</strong> Reserve a downstairs table via <a class="link-gold" href="https://www.opentable.com/coyote-cafe" target="_blank" rel="noopener">OpenTable</a> or call (505) 983-1615, then ask to be moved to the rooftop after arrival, or arrive early for a rooftop walk-in.</p>
+        </div>
+      </li>
+      <li class="timeline-row tl-soon">
+        <span class="tl-badge">3–4 weeks out</span>
+        <div class="tl-body">
+          <p class="tl-name">All other Viator activities</p>
+          <p class="tl-note">Best of Santa Fe Walking Tour (Fri), Canyon Road Art &amp; History (Sat), Sip &amp; Savor (Sun), Allan Houser Gardens (Mon), Dawn Balloon (Tue). Confirm each via your <a class="link-gold" href="https://www.viator.com/account" target="_blank" rel="noopener">Viator account</a> at T-21 days.</p>
+        </div>
+      </li>
+      <li class="timeline-row tl-flex">
+        <span class="tl-badge">Backups — hold day-of</span>
+        <div class="tl-body">
+          <p class="tl-name">Sazón · Joseph's · Restaurant Martin · Coyote rooftop</p>
+          <p class="tl-note">Don't pre-book — hold as drop-in alternates. Most can seat a deuce same-evening with a 4 PM call. (Sassella is closed for repairs until further notice and has been removed from backups.)</p>
+        </div>
+      </li>
+    </ul>
+
+    <h3 class="grouphead">Altitude Brief</h3>
+    <div class="brief-grid">
+      <div class="brief-card brief-altitude">
+        <p class="brief-label">Altitude · 7,200 ft</p>
+        <p class="brief-text">Santa Fe is the <strong>highest state capital in the U.S.</strong> Most travelers feel mild effects on day one — light-headedness, slower breath, faster pulse. It passes.</p>
+        <ul class="brief-list">
+          <li><strong>Hydrate hard:</strong> 3–4 L water/day, starting on the plane</li>
+          <li><strong>Go easy on alcohol day one</strong> — one drink hits like two</li>
+          <li><strong>Walk before you climb</strong> — Plaza Wed/Fri before Bandelier Thu</li>
+          <li><strong>Sleep on the higher side</strong> — head propped helps</li>
+          <li><strong>Sunscreen indoors too</strong> — UV is ~25% stronger than at sea level</li>
+          <li><strong>Watch for:</strong> headache that won't quit, nausea, breathlessness at rest — descend or call concierge for O₂</li>
+        </ul>
+      </div>
+      <div class="brief-card brief-packing-pointer">
+        <p class="brief-label">Packing</p>
+        <p class="brief-text">Full checklist with cubes-and-carry-on strategy lives in its own tab — tap <a href="#tab-packing" data-tab-link="packing" class="link-gold">Packing List</a> for the interactive version that saves your check-offs to this device.</p>
+      </div>
+    </div>
+
+    <h3 class="grouphead">Important Notes</h3>
+    <div class="notes-grid">
+      <div class="notes-card">
+        <p class="notes-label">Hotel Policies</p>
+        <ul class="notes-list">
+          <li>Check-in 4:00 PM · Check-out 12:00 PM</li>
+          <li>Cancellation: 24 hours prior to arrival</li>
+          <li>Daily breakfast buffet included</li>
+          <li>Complimentary shuttle within 1-mile radius</li>
+          <li>Valid credit card required at booking</li>
+        </ul>
+      </div>
+      <div class="notes-card">
+        <p class="notes-label">Ticketing Reminders</p>
+        <ul class="notes-list">
+          <li>Revisions within 24 hrs of ticketing; penalties after</li>
+          <li>Cancellations must be made prior to travel</li>
+          <li>Debit cards may not be accepted for car rentals</li>
+          <li>Passport valid 6 months past return date for international travel</li>
+          <li>REAL ID required for domestic travel (May 7, 2025+)</li>
+        </ul>
+      </div>
+      <div class="notes-card">
+        <p class="notes-label">Viator Bookings</p>
+        <ul class="notes-list">
+          <li>All paid activities booked via your Viator account</li>
+          <li>Viator cannot forward confirmations — log in to view</li>
+          <li>Bandelier / Puye Cliffs: confirmed with operator — Booking #——————, 8:00 AM Thu Jun 4 at La Fonda</li>
+        </ul>
+      </div>
+      <div class="notes-card">
+        <p class="notes-label">Travel Agent</p>
+        <ul class="notes-list">
+          <li>Travel advisor details redacted for demo</li>
+          <li>Airline Reference: <span class="mono">——————</span></li>
+          <li>E-Ticket: <span class="mono">—————————————</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- FLIGHTS & HOTEL (merged) -->
+  <section class="tab-panel" role="tabpanel" data-panel="logistics" aria-labelledby="t-logistics" id="tab-logistics" hidden>
+    <p class="eyebrow">Logistics</p>
+    <h2 class="display">Flights &amp; Hotel.</h2>
+
+    <h3 class="grouphead">Flights — American Airlines</h3>
+    <div class="conf-chips">
+      <span class="conf-chip"><span class="conf-route">Trip Locator</span><span class="conf-code">——————</span></span>
+      <span class="conf-chip"><span class="conf-route">Airline Ref</span><span class="conf-code">——————</span></span>
+    </div>
+    <div class="flight-quicklinks">
+      <a class="flight-pill flight-pill-primary" href="https://www.aa.com/" target="_blank" rel="noopener" aria-label="American Airlines (new tab)">Manage trip on AA ↗</a>
+      <a class="flight-pill" href="https://www.aa.com/travelInformation/flights/status" target="_blank" rel="noopener" aria-label="American Airlines flight status (new tab)">AA flight status ↗</a>
+      <a class="flight-pill" href="https://www.flightaware.com/live/fleet/AAL" target="_blank" rel="noopener" aria-label="FlightAware live tracker (new tab)">FlightAware tracker ↗</a>
+    </div>
+    <div class="ah-wrap">
+      <table class="ah-table" data-table="flights">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Route</th>
+            <th>Date</th>
+            <th>Dep</th>
+            <th>Arr</th>
+            <th>Flight</th>
+            <th>Info</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr data-date="2026-06-03" data-ident="AAL3006" data-sched-dep="7:00 AM" data-sched-arr="8:40 AM" data-origin="AVL" data-destination="DFW">
+            <td><span class="ah-badge sched">Sched</span></td>
+            <td class="ah-route">AVL <span class="arr">→</span> DFW</td>
+            <td>Jun 3</td>
+            <td class="ah-mono" data-cell="dep">7:00 AM</td>
+            <td class="ah-mono" data-cell="arr">8:40 AM</td>
+            <td class="ah-mono">AA 3006</td>
+            <td><span class="ah-info-static">2h 40m</span><span class="ah-live-line" data-cell="live"></span><br><a class="ah-status-link" href="https://flightaware.com/live/flight/AAL3006" target="_blank" rel="noopener" aria-label="Track AA 3006 live (new tab)">Live status ↗</a></td>
+          </tr>
+          <tr data-date="2026-06-03" data-ident="AAL6295" data-sched-dep="3:45 PM" data-sched-arr="4:43 PM" data-origin="DFW" data-destination="SAF">
+            <td><span class="ah-badge sched">Sched</span></td>
+            <td class="ah-route">DFW <span class="arr">→</span> SAF</td>
+            <td>Jun 3</td>
+            <td class="ah-mono" data-cell="dep">3:45 PM</td>
+            <td class="ah-mono" data-cell="arr">4:43 PM</td>
+            <td class="ah-mono">AA 6295</td>
+            <td><span class="ah-info-static">Seat TBD · T-E · 1h 58m · Gate E29A</span><span class="ah-live-line" data-cell="live"></span><br><a class="ah-status-link" href="https://flightaware.com/live/flight/AAL6295" target="_blank" rel="noopener" aria-label="Track AA 6295 live (new tab)">Live status ↗</a></td>
+          </tr>
+          <tr data-date="2026-06-10" data-ident="AAL6299" data-sched-dep="12:58 PM" data-sched-arr="3:54 PM" data-origin="SAF" data-destination="DFW">
+            <td><span class="ah-badge sched">Sched</span></td>
+            <td class="ah-route">SAF <span class="arr">→</span> DFW</td>
+            <td>Jun 10</td>
+            <td class="ah-mono" data-cell="dep">12:58 PM</td>
+            <td class="ah-mono" data-cell="arr">3:54 PM</td>
+            <td class="ah-mono">AA 6299</td>
+            <td><span class="ah-info-static">T-E · 1h 56m</span><span class="ah-live-line" data-cell="live"></span><br><a class="ah-status-link" href="https://flightaware.com/live/flight/AAL6299" target="_blank" rel="noopener" aria-label="Track AA 6299 live (new tab)">Live status ↗</a></td>
+          </tr>
+          <tr data-date="2026-06-10" data-ident="AAL379" data-sched-dep="7:55 PM" data-sched-arr="11:09 PM" data-origin="DFW" data-destination="AVL">
+            <td><span class="ah-badge sched">Sched</span></td>
+            <td class="ah-route">DFW <span class="arr">→</span> AVL</td>
+            <td>Jun 10</td>
+            <td class="ah-mono" data-cell="dep">7:55 PM</td>
+            <td class="ah-mono" data-cell="arr">11:09 PM</td>
+            <td class="ah-mono">AA 0379</td>
+            <td><span class="ah-info-static">2h 14m</span><span class="ah-live-line" data-cell="live"></span><br><a class="ah-status-link" href="https://flightaware.com/live/flight/AAL379" target="_blank" rel="noopener" aria-label="Track AA 379 live (new tab)">Live status ↗</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="ah-foot" id="ah-foot-status">AA 6295 / 6299 operated by SkyWest as American Eagle (CRJ-700). AA 3006 / 0379 on Airbus A319. <span class="ah-live-meta" data-live-meta>Live status auto-refreshes from FlightAware AeroAPI every time the app opens.</span></p>
+
+    <h3 class="grouphead">Airport ↔ Hotel</h3>
+    <div class="transport-card">
+      <p class="transport-lede"><strong>Santa Fe Municipal (SAF) is ~20 min / 7 mi from the Inn on the Alameda.</strong> The inn’s complimentary shuttle covers a 1-mile radius downtown but <strong>does not run to the airport</strong>. Easiest options on arrival and departure:</p>
+
+      <div class="transport-grid">
+        <div class="transport-option">
+          <div class="transport-head">
+            <span class="transport-tag transport-tag-best">Recommended</span>
+            <span class="transport-name">Uber</span>
+            <span class="transport-price">~$25–40</span>
+          </div>
+          <p class="transport-body">Available 24/7 at SAF; designated rideshare pickup zone right outside baggage claim. ~20 min to the inn. The app will guide you to the exact spot after you request the ride.</p>
+          <div class="transport-actions">
+            <a class="transport-btn transport-btn-primary" href="uber://?action=setPickup&amp;pickup[formatted_address]=Santa%20Fe%20Municipal%20Airport%2C%20121%20Aviation%20Dr%2C%20Santa%20Fe%2C%20NM%2087507&amp;dropoff[formatted_address]=Inn%20on%20the%20Alameda%2C%20303%20E%20Alameda%20St%2C%20Santa%20Fe%2C%20NM%2087501" target="_blank" rel="noopener" aria-label="Open Uber app: SAF to Inn on the Alameda">Open Uber: SAF → Inn ↗</a>
+            <a class="transport-btn" href="https://www.uber.com/global/en/r/airports/saf/" target="_blank" rel="noopener" aria-label="Uber at Santa Fe Airport info page">Pickup info ↗</a>
+          </div>
+        </div>
+
+        <div class="transport-option">
+          <div class="transport-head">
+            <span class="transport-name">Lyft</span>
+            <span class="transport-price">~$25–40</span>
+          </div>
+          <p class="transport-body">Same airport pickup zone as Uber. Sometimes shorter wait depending on driver supply — worth checking both apps if one shows a 10+ min wait.</p>
+          <div class="transport-actions">
+            <a class="transport-btn transport-btn-primary" href="https://ride.lyft.com/ridetype?destination[latitude]=35.6840&amp;destination[longitude]=-105.9329&amp;pickup[latitude]=35.6175&amp;pickup[longitude]=-106.0884&amp;id=lyft" target="_blank" rel="noopener" aria-label="Open Lyft: SAF to Inn on the Alameda">Open Lyft: SAF → Inn ↗</a>
+          </div>
+        </div>
+
+        <div class="transport-option">
+          <div class="transport-head">
+            <span class="transport-name">Pre-booked Car / Taxi</span>
+            <span class="transport-price">~$25–60</span>
+          </div>
+          <p class="transport-body">No traditional metered taxis in Santa Fe, but private car services run flat-rate transfers. Book ahead so a driver is waiting when you land — useful if Uber/Lyft show a long wait on June 3rd.</p>
+          <div class="transport-actions">
+            <a class="transport-btn" href="tel:+15054745696" aria-label="Call Groome Transportation">Groome · (505) 474-5696</a>
+            <a class="transport-btn" href="tel:+15054243367" aria-label="Call Roadrunner Shuttle">Roadrunner · (505) 424-3367</a>
+          </div>
+        </div>
+
+        <div class="transport-option">
+          <div class="transport-head">
+            <span class="transport-name">Roadrunner Shared Shuttle</span>
+            <span class="transport-price">~$16</span>
+          </div>
+          <p class="transport-body">Shared van — cheapest option but may wait for other passengers and detour to multiple hotels. Call ahead to reserve.</p>
+          <div class="transport-actions">
+            <a class="transport-btn" href="tel:+15054243367" aria-label="Call Roadrunner Shuttle to book">Reserve · (505) 424-3367</a>
+          </div>
+        </div>
+      </div>
+
+      <p class="transport-foot"><strong>Heads up:</strong> SAF is small — if Uber/Lyft are scarce after your 4:43 PM arrival, the Roadrunner desk is inside the terminal. On departure (Jun 10), pre-book your ride the night before, especially for the 12:58 PM SAF flight.</p>
+    </div>
+
+    <h3 class="grouphead">Accommodation · 7 nights</h3>
+    <div class="hotel-card">
+      <div class="hotel-status">Confirmed · #————————</div>
+      <h3 class="hotel-name">Inn on the Alameda</h3>
+      <p class="hotel-addr">303 East Alameda · Santa Fe, NM 87501<br/>(505) 984-2121</p>
+      <p><a class="link-gold" href="https://www.innonthealameda.com" target="_blank" rel="noopener">Website ↗</a> · <a class="link-gold" href="https://maps.google.com/?q=Inn+on+the+Alameda+Santa+Fe" target="_blank" rel="noopener">Map ↗</a></p>
+      <div class="hotel-grid">
+        <div><span class="flight-label">Check-in</span><span class="flight-val">Wed, June 3 · 4:00 PM</span></div>
+        <div><span class="flight-label">Check-out</span><span class="flight-val">Wed, June 10 · 12:00 PM</span></div>
+        <div><span class="flight-label">Room</span><span class="flight-val">Deluxe King w/ Gas Fireplace</span></div>
+        <div><span class="flight-label">Avg Daily Rate</span><span class="flight-val">$436.71</span></div>
+        <div><span class="flight-label">Total Taxes</span><span class="flight-val">$464.28</span></div>
+        <div><span class="flight-label">Stay Total</span><span class="flight-val">$3,521.28</span></div>
+        <div><span class="flight-label">Cancellation</span><span class="flight-val">24 hr</span></div>
+        <div><span class="flight-label">Perks</span><span class="flight-val">Breakfast · 1-mi free shuttle</span></div>
+      </div>
+      <p class="hotel-incl">A made-from-scratch breakfast buffet is included daily — pastries, eggs, bacon, sausage, potatoes, green &amp; red chile, Aroma Coffee, juices, teas. Complimentary shuttle within a 1-mile radius (contact front desk for availability).</p>
+    </div>
+  </section>
+
+    <!-- DINING -->
+  <section class="tab-panel" role="tabpanel" data-panel="dining" aria-labelledby="t-dining" id="tab-dining" hidden>
+    <p class="eyebrow">Dining</p>
+    <h2 class="display">Where you'll eat.</h2>
+    <p class="lede">Seven nights to plan. Tap a night, choose a price tier, then pick a restaurant — your selection shows up on that day's tab. Mark each one booked once you have the confirmation #.</p>
+
+    <!-- Compact status line (auto-updates as you pick + book) -->
+    <div class="tr-host-section">
+      <div id="tr-timeline-mount"></div>
+      <div id="fix-banner" hidden style="display:none"></div>
+    </div>
+
+    <!-- Per-night picker -->
+    <div class="tr-host-section">
+      <div id="tr-dining-mount"></div>
+    </div>
+
+    <!-- Reset (helpful while planning) -->
+    <div class="tr-host-reset-link">
+      <button type="button" id="tr-reset-btn">Clear all picks</button>
+      <span class="tr-host-reset-note">· Removes your selections and confirmations on this device.</span>
+    </div>
+  </section>
+  <!-- ACTIVITIES (rich expansion) -->
+  <section class="tab-panel" role="tabpanel" data-panel="activities" aria-labelledby="t-activities" id="tab-activities" hidden>
+    <p class="eyebrow">Activities</p>
+    <h2 class="display">Booked &amp; on hold.</h2>
+    <p class="lede">Each activity expands to show When to arrive · What to wear · What to expect. Tap the chevron to open.</p>
+
+    <div class="act-list-rich">
+
+      <details class="act-acc">
+        <summary>
+          <span class="act-day-pill">THU · Jun 4</span>
+          <span class="act-name">Bandelier &amp; Puye Cliffs — Driving Tour</span>
+          <span class="act-status paid">Confirmed · $285.47</span>
+          <span class="act-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="act-body">
+          <p class="act-summary">Confirmed with Vigilante Guides (owner: Jerard Vigil) for Thu Jun 4. <strong>Departs 8:00 AM sharp</strong> from La Fonda; van arrives 7:45–7:50 AM. Returns ~3:30 PM. Luxury Mercedes-Benz van, local guide, <strong>lunch included</strong>. 2–3 miles of walking, primarily at Bandelier. 1 adult.</p>
+          <div class="act-row act-booking" data-act-key="bandelier"><span class="act-label">Booking</span><div class="act-links"><a class="act-link-pill" href="https://vigilanteguides.com" target="_blank" rel="noopener" style="background:#1e3a5f;color:#fff;border-color:#1e3a5f;">Vigilante Guides ↗</a><span class="act-br">Booking #—————— · Order #——————</span></div></div>
+          <div class="act-row" style="background:#fff4d6;border:1px solid #d8a830;border-radius:8px;padding:10px 12px;"><span class="act-label" style="color:#7a5a00;">⚠ Next step</span><p style="margin:0;"><strong>Sign the waiver before the tour.</strong> The operator sends a Sign waiver link in their confirmation email. If you can’t find it, contact <a class="link-gold" href="mailto:info@vigilanteguides.com">info@vigilanteguides.com</a> or call <a class="link-gold" href="tel:+15053361799">(505) 336-1799</a>.</p></div>
+          <div class="act-row"><span class="act-label">Meet</span><p><strong>La Fonda on the Plaza</strong> — 100 E San Francisco St, Santa Fe, NM 87501 (~6 min drive / 18 min walk from the Inn on the Alameda). Meet outside the front on E San Francisco St; look for a <strong>black Mercedes Benz Sprinter</strong>. Van arrives 10–15 min before <strong>8:00 AM departure</strong>. Tour leaves promptly — if running late, call <a class="link-gold" href="tel:+15053361799">(505) 336-1799</a> ahead. Bathrooms inside La Fonda before you go. <a class="link-gold" href="https://www.google.com/maps/search/?api=1&query=La+Fonda+on+the+Plaza,+100+E+San+Francisco+St,+Santa+Fe,+NM+87501" target="_blank" rel="noopener">Open in Google Maps ↗</a></p><p style="margin-top:8px;"><strong>Parking:</strong> Water Street Lot (100 E Water St) or Sandoval Parking Garage (121 Sandoval St) — both 2-min walk to La Fonda.</p></div>
+          <div class="act-row"><span class="act-label">Wear &amp; bring</span><p>Comfortable closed-toe walking shoes or light hiking boots — trails are uneven and the optional Alcove House climb involves four wooden ladders (140 ft total). Light layers; June mornings at 6,600 ft can be cool before warming by midday. Sun hat, sunglasses, sunscreen, water bottle, camera. ID if you plan to have an alcoholic beverage with lunch.</p></div>
+          <div class="act-row"><span class="act-label">Expect</span><p>A 7–hour day in ancient Pueblo history. At Bandelier, walk paved and unpaved trails past hundreds of cave dwellings carved into volcanic tuff; ladder climb to Alcove House is optional. Puye Cliffs adds a mesa-top ruin complex with sweeping high-desert views. Lunch is provided. Tour operates rain or shine. Minimum 4 guests — Vigilante will email if they need to reschedule; if you don’t hear from them, you’re a go.</p></div>
+          <div class="act-row"><span class="act-label">Cancel</span><p>1-week cancellation policy. To cancel or reschedule, call <a class="link-gold" href="tel:+15053361799">(505) 336-1799</a> or email <a class="link-gold" href="mailto:info@vigilanteguides.com">info@vigilanteguides.com</a>. Charges appear on the statement as <em>FH* Vigilante Guides</em>.</p></div>
+        </div>
+      </details>
+
+      <details class="act-acc">
+        <summary>
+          <span class="act-day-pill">FRI · Jun 5</span>
+          <span class="act-name">Best of Santa Fe Walking Tour</span>
+          <span class="act-status paid">Paid · $299 · 1:00 PM</span>
+          <span class="act-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="act-body">
+          <p class="act-summary">Small-group guided walking tour (max 10) of historic Santa Fe — the Palace of the Governors, adobe architecture, the storied Plaza, and the city's rich Indigenous and Spanish heritage.</p>
+          <div class="act-row act-booking" data-act-key="walking" data-br="1377027517"><span class="act-label">Booking</span><div class="act-links"><a class="act-link-pill viator" href="https://www.viator.com/tours/Santa-Fe/The-Best-of-Santa-Fe-Walking-Tour/d22369-469662P1" target="_blank" rel="noopener">View on Viator ↗</a><span class="act-br">BR ——————————</span><span class="act-ticket-slot"></span></div></div>
+          <div class="act-row"><span class="act-label">Meet</span><p><strong>1:00 PM · Soldiers’ Monument, Santa Fe Plaza</strong> — 63 Lincoln Ave, Santa Fe, NM 87501. Meet at the front stairs of the covered stage in the center of the Plaza. ~6 min Uber / 15 min walk from the Inn on the Alameda; plan to be there by 12:50 PM. <a class="link-gold" href="https://www.google.com/maps/search/?api=1&query=Soldiers+Monument,+Santa+Fe+Plaza,+63+Lincoln+Ave,+Santa+Fe,+NM+87501" target="_blank" rel="noopener">Open in Google Maps ↗</a></p><p style="margin-top:8px;">Duration ~2–2.5 hrs · ends at Barrio de Analco (E De Vargas St &amp; Old Santa Fe Trail). Small group, max 10.</p></div>
+          <div class="act-row"><span class="act-label">Wear</span><p>Comfortable walking shoes — the historic district is entirely flat but paved with uneven brick and stone in places. Light, breathable clothing; June in Santa Fe averages 80°F by midday with intense high-altitude sun. Sun hat, sunglasses, and sunscreen. A light layer for any shaded or indoor portions.</p></div>
+          <div class="act-row"><span class="act-label">Expect</span><p>A leisurely 2–2.5 hour guided walk through the heart of the city: the Palace of the Governors (oldest continuously occupied public building in the US), the Cathedral Basilica of St. Francis of Assisi, the historic Plaza, and the surrounding adobe neighborhood. Small group (max 10) — intimate pace, plenty of guide time. Bring a small water bottle.</p></div>
+        </div>
+      </details>
+
+      <details class="act-acc">
+        <summary>
+          <span class="act-day-pill">SAT · Jun 6</span>
+          <span class="act-name">Canyon Road Art &amp; History Tour</span>
+          <span class="act-status paid">Paid · $70 · 2:00 PM</span>
+          <span class="act-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="act-body">
+          <p class="act-summary">A curated journey along the legendary Canyon Road gallery mile — over 100 galleries, studios, and gardens showcasing Southwestern painting, sculpture, and Indigenous art.</p>
+          <div class="act-row act-booking" data-act-key="canyon" data-br="1377029851"><span class="act-label">Booking</span><div class="act-links"><a class="act-link-pill viator" href="https://www.viator.com/tours/Santa-Fe/Canyon-Road-Quickie/d22369-44321P3" target="_blank" rel="noopener">View on Viator ↗</a><span class="act-br">BR ——————————</span><span class="act-ticket-slot"></span></div></div>
+          <div class="act-row"><span class="act-label">Meet</span><p><strong>2:00 PM · Wiford Gallery</strong> — 403 Canyon Rd, Santa Fe, NM 87501. ~5 min Uber / 12 min walk up Canyon Rd from the Inn on the Alameda; plan to arrive 1:50 PM. Free street parking on Canyon Rd, Delgado St, or Alameda St if you drive. <a class="link-gold" href="https://www.google.com/maps/search/?api=1&query=Wiford+Gallery,+403+Canyon+Rd,+Santa+Fe,+NM+87501" target="_blank" rel="noopener">Open in Google Maps ↗</a></p><p style="margin-top:8px;">Duration ~2 hrs · ~¾-mile walk uphill, then explore on your own afterward. Small group, max 10.</p></div>
+          <div class="act-row"><span class="act-label">Wear</span><p>Comfortable walking shoes — Canyon Road is a half-mile uphill slope on a mix of pavement and flagstone. Relaxed but presentable attire is appropriate given the upscale gallery setting. Sun protection essential; the road is largely open. A small bag is handy for any purchases or gallery brochures.</p></div>
+          <div class="act-row"><span class="act-label">Expect</span><p>A guided exploration of more than 100 galleries, studios, and sculpture gardens along one of the most celebrated art streets in the country. The guide provides context on artists, styles, and the history of Santa Fe's art colony. Galleries range from Indigenous and Pueblo pottery to contemporary painting and large-scale bronze sculpture. You are welcome to enter galleries and speak with artists. The walk takes 2–3 hours; the full street can be explored further at your own pace afterward.</p></div>
+        </div>
+      </details>
+
+      <details class="act-acc">
+        <summary>
+          <span class="act-day-pill">SUN · Jun 7</span>
+          <span class="act-name">Original Wander NM "Sip &amp; Savor"</span>
+          <span class="act-status paid">Paid · $229 · 1:00 PM</span>
+          <span class="act-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="act-body">
+          <p class="act-summary">An immersive 4-hour afternoon pairing New Mexico's celebrated culinary and arts scene — local wineries, artisan producers, chefs, and makers. 4 tasting stops around the Plaza.</p>
+          <div class="act-row act-booking" data-act-key="sipsavor" data-br="1375875273"><span class="act-label">Booking</span><div class="act-links"><a class="act-link-pill viator" href="https://www.viator.com/tours/Santa-Fe/Santa-Fe-Sip-and-Savor-Food-Tour/d22369-44288P2" target="_blank" rel="noopener">View on Viator ↗</a><span class="act-br">BR ——————————</span><span class="act-ticket-slot"></span></div></div>
+          <div class="act-row"><span class="act-label">Meet</span><p><strong>1:00 PM · First National Santa Fe Bank — ATM out front</strong>, 62 Lincoln Ave, Santa Fe, NM 87501 (NW corner of the Plaza). ~6 min Uber / 15 min walk from the Inn on the Alameda; plan to be there by 12:50 PM. <a class="link-gold" href="https://www.google.com/maps/search/?api=1&query=62+Lincoln+Ave,+Santa+Fe,+NM+87501" target="_blank" rel="noopener">Open in Google Maps ↗</a></p><p style="margin-top:8px;">Duration ~4 hrs · max 12 guests · must be 21+ for alcohol tastings. Hotel pickup is included if you prefer it over meeting at the Plaza — reply to the Viator confirmation to arrange.</p></div>
+          <div class="act-row"><span class="act-label">Wear</span><p>Smart casual — this is a food and wine experience visiting local producers, tasting rooms, and artisan venues. Comfortable shoes suitable for light walking between stops. A light layer for any air-conditioned indoor spaces. Avoid heavy perfume, which can interfere with tasting.</p></div>
+          <div class="act-row"><span class="act-label">Expect</span><p>A curated afternoon moving between local wineries, culinary artisans, and specialty food producers with guided tastings at each stop. New Mexico has a surprisingly robust wine and food culture rooted in chile, piñon, heritage grains, and high-desert produce. Pace yourself — multiple tastings are included. A light lunch beforehand is advisable; the experience is tasting-focused rather than a full meal.</p></div>
+        </div>
+      </details>
+
+      <details class="act-acc">
+        <summary>
+          <span class="act-day-pill">MON · Jun 8</span>
+          <span class="act-name">New Mexican Flavors Food Tour of Santa Fe Plaza</span>
+          <span class="act-status paid">Paid · 10:45 AM</span>
+          <span class="act-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="act-body">
+          <p class="act-summary">Guided walking food tour of the Santa Fe Plaza with Food Tour New Mexico — stops at multiple Plaza-area kitchens for chile, heritage grains, and New Mexican specialties. 2.5 hours, tastings included.</p>
+          <div class="act-row act-booking"><span class="act-label">Booking</span><div class="act-links"><a class="act-link-pill" href="https://fareharbor.com/embeds/book/foodtournewmexico/items/210986/booking/9aced046-4860-4011-bf37-5ca59d0aec69/" target="_blank" rel="noopener">View booking ↗</a><span class="act-br">Booking #353908763</span></div></div>
+          <div class="act-row"><span class="act-label">Meet</span><p><strong>10:45 AM · Santa Fe Plaza</strong> — specific meeting spot will be confirmed by Food Tour New Mexico (typically a clearly marked corner of the Plaza). ~6 min Uber / 15 min walk from the Inn on the Alameda; plan to arrive by 10:35 AM. <a class="link-gold" href="https://www.google.com/maps/search/?api=1&amp;query=Santa+Fe+Plaza,+Santa+Fe,+NM+87501" target="_blank" rel="noopener">Open in Google Maps ↗</a></p><p style="margin-top:8px;">Ends 1:15 PM · leaves a clean 45-min window before the Allan Houser visit.</p></div>
+          <div class="act-row"><span class="act-label">Wear</span><p>Comfortable walking shoes — the Plaza is flat but the tour covers several blocks over 2.5 hours. Light, breathable layers; June midday averages 80°F with strong sun. Sun hat and sunglasses; sunscreen.</p></div>
+          <div class="act-row"><span class="act-label">Expect</span><p>Tastings at multiple Plaza-area establishments — come hungry but pace yourself, the portions add up. The guide weaves food history (chile, the Camino Real trade, Pueblo Revival cooking) into the walk. Small group; intimate pace.</p></div>
+          <div class="act-row"><span class="act-label">Notes</span><p>Tell the guide of any allergies or dietary restrictions at the start. Bring a small water bottle. After the tour, you have a ~45 min window before heading south to the Allan Houser ranch.</p></div>
+        </div>
+      </details>
+
+      <details class="act-acc">
+        <summary>
+          <span class="act-day-pill">MON · Jun 8</span>
+          <span class="act-name">Allan Houser Sculpture Gardens &amp; Gallery</span>
+          <span class="act-status" style="background:#fff4d6;color:#7a5a00;border:1px solid #d8a830;">Verify time</span>
+          <span class="act-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="act-body">
+          <p class="act-summary">Visit the world-renowned sculpture compound of Chiricahua Apache master Allan Houser — monumental bronze and stone works set against the high desert landscape south of Santa Fe. After 2:00 PM.</p>
+          <div class="act-row act-booking" data-act-key="houser" data-br="1375875269"><span class="act-label">Booking</span><div class="act-links"><span class="act-br">Viator · BR ——————————</span><span class="act-ticket-slot"></span></div></div>
+          <div class="act-row" style="background:#fff4d6;border:1px solid #d8a830;border-radius:8px;padding:10px 12px;"><span class="act-label" style="color:#7a5a00;">⚠ Heads-up</span><p style="margin:0;"><strong>The gallery normally runs tours Tue / Thu / Sat only.</strong> Your booking shows Monday Jun 8 · after 2:00 PM — confirm directly with the Allan Houser team that they’ve scheduled a private Monday visit. Call <a class="link-gold" href="tel:+15054711528">(505) 471-1528</a> or <a class="link-gold" href="tel:+15059824705">(505) 982-4705</a>.</p></div>
+          <div class="act-row"><span class="act-label">Meet</span><p><strong>26 Haozous Rd, Santa Fe, NM 87508</strong> (off Camino Los Abuelos, Turquoise Trail) — ~25 min drive (about $35–40 Uber) south of downtown. Private property, no walk-ins; arrive 10 minutes before your appointment. <a class="link-gold" href="https://www.google.com/maps/search/?api=1&query=26+Haozous+Rd,+Santa+Fe,+NM+87508" target="_blank" rel="noopener">Open in Google Maps ↗</a></p><p style="margin-top:8px;">Duration ~2 hrs · short film + guided walk + gallery. Gravel paths; golf cart available on request.</p></div>
+          <div class="act-row"><span class="act-label">Wear</span><p>Casual but presentable attire. Comfortable walking shoes — the sculpture gardens involve outdoor pathways on natural terrain. Sun protection essential; the grounds are largely open-air. The visit runs approximately 1.5–2 hours.</p></div>
+          <div class="act-row"><span class="act-label">Expect</span><p>An intimate, appointment-only visit to the private compound of Chiricahua Apache master sculptor Allan Houser (1914–1994), widely regarded as the father of modern Native American art. The grounds feature monumental bronze and stone works set against sweeping high-desert landscape. A family representative or estate guide typically leads the visit, providing personal context on Houser's life, philosophy, and legacy. A quietly moving and unhurried experience — very different from a traditional museum visit.</p></div>
+        </div>
+      </details>
+
+      <details class="act-acc">
+        <summary>
+          <span class="act-day-pill">TUE · Jun 9</span>
+          <span class="act-name">Meow Wolf · House of Eternal Return</span>
+          <span class="act-status paid">Paid · 2:00 PM</span>
+          <span class="act-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="act-body">
+          <p class="act-summary">Immersive 70-room art installation — a Victorian house that opens into otherworldly realms. The original Meow Wolf experience and an unmistakable Santa Fe landmark.</p>
+          <div class="act-row act-booking"><span class="act-label">Booking</span><div class="act-links"><a class="act-link-pill viator" href="https://www.viator.com/auto-login/EBCF4632312ADFDBF867C1F5617FCA3B-846EF2EC9C7C0B9FD4DBD8F3A0C01A0434CFE299083F92035C68F79F6CDE0C55CAE35D657238B69A6DA1E83377C2BD5E6EE07B2F30024F3C65650F6BBF7C1AEEF7FA7656FD49A2A9A26CD42979A4E606E5266364B2ED87A88A04B565CC5BB3E4E0E32570D41317A9C31BCC512A9226BF482ED32A1EF39498C4D2743DB55F097B18709F9749CD8C6BEE20573917FE6456" target="_blank" rel="noopener">View on Viator ↗</a><span class="act-br">Conf BKW-36Y-PTK9</span></div></div>
+          <div class="act-row"><span class="act-label">Meet</span><p><strong>2:00 PM · 1352 Rufina Cir, Santa Fe, NM 87507.</strong> ~10 min drive from the Inn on the Alameda. Free on-site parking. Pick up tickets at the box office — arrive 10–15 min early. Entry window 2:00–3:30 PM. <a class="link-gold" href="https://www.google.com/maps/search/?api=1&amp;query=1352+Rufina+Cir,+Santa+Fe,+NM+87507" target="_blank" rel="noopener">Open in Google Maps ↗</a></p></div>
+          <div class="act-row"><span class="act-label">Wear</span><p>Comfortable closed-toe shoes — lots of crawling, climbing, and ladders. Layers help (interior lighting and AC vary by room). Leave large bags in the car; small purses are fine.</p></div>
+          <div class="act-row"><span class="act-label">Expect</span><p>Plan 2–3 hours inside. The house holds 70+ rooms with hidden passages — some narrow, some flashing lights, some loud audio. Restrooms inside. A small cafe on site if you want a coffee after. After Meow Wolf you'll have time to return to the Inn before the 7 PM farewell dinner.</p></div>
+          <div class="act-row"><span class="act-label">Notes</span><p>Photos are encouraged. The narrative is open-ended — wander and discover. Helpful guides in red vests are stationed throughout if you want a nudge.</p></div>
+        </div>
+      </details>
+
+      <details class="act-acc">
+        <summary>
+          <span class="act-day-pill">TUE · Jun 9</span>
+          <span class="act-name">Balloon Above New Mexico</span>
+          <span class="act-status paid">Paid · $315 · 4:30 AM</span>
+          <span class="act-chev" aria-hidden="true">▾</span>
+        </summary>
+        <div class="act-body">
+          <p class="act-summary">Soar above the Rio Grande Valley and the Sangre de Cristo Mountains at dawn in a hot air balloon. New Mexico's legendary morning skies seen from above.</p>
+          <div class="act-row act-booking" data-act-key="balloon" data-br="1377032631"><span class="act-label">Booking</span><div class="act-links"><a class="act-link-pill viator" href="https://www.viator.com/tours/Santa-Fe/Hot-Air-Balloon-Rides-Tours-in-Santa-Fe-NM-area-May-thru-Oct/d22369-474082P1" target="_blank" rel="noopener">View on Viator ↗</a><span class="act-br">BR ——————————</span><span class="act-ticket-slot"></span></div></div>
+          <div class="act-row"><span class="act-label">Meet</span><p><strong>4:30 AM · 600 N Guadalupe St, Santa Fe, NM 87501.</strong> Look for a <strong>white Ford Expedition</strong> with the operator’s logo. ~6 min drive from the Inn on the Alameda — leave by 4:15 AM. Set 3 alarms. <a class="link-gold" href="https://www.google.com/maps/search/?api=1&query=600+N+Guadalupe+St,+Santa+Fe,+NM+87501" target="_blank" rel="noopener">Open in Google Maps ↗</a></p><p style="margin-top:8px;">Hotel pickup also available — reply to the Viator confirmation if you’d rather be picked up at the Inn on the Alameda. 3–4 hrs total (45–60 min flight); weather-dependent (full refund if cancelled). Champagne &amp; snacks included.</p></div>
+          <div class="act-row"><span class="act-label">Wear</span><p>Layers are essential — early morning temperatures in Santa Fe in June can be in the 50s°F at ground level and cooler aloft. Wear comfortable, non-flammable clothing (avoid loose synthetic fabrics near the burner). Closed-toe shoes required — no sandals. Bring a light jacket or fleece you can remove once the sun rises. Sunglasses and a hat with a chin strap or brim are practical.</p></div>
+          <div class="act-row"><span class="act-label">Expect</span><p>A 1–1.5 hour flight typically covering 5–10 miles depending on wind, followed by a traditional champagne (or non-alcoholic) celebration upon landing. The total experience including ground time runs 3–4 hours. Views encompass the Rio Grande Valley, the Sangre de Cristo and Jemez mountain ranges, and the high-desert plateau. Flights are weather-dependent; the operator may reschedule due to wind. Some standing for the duration of the flight — a basket with padded rails. A genuinely once-in-a-lifetime perspective on the New Mexico landscape.</p></div>
+        </div>
+      </details>
+
+    </div>
+    <p class="ess-note">Total confirmed activities: <strong>$948.00</strong>.</p>
+  </section>
+
+  <!-- PACKING LIST -->
+  <section class="tab-panel" role="tabpanel" data-panel="packing" aria-labelledby="t-packing" id="tab-packing" hidden>
+    <p class="eyebrow">Pre-Trip</p>
+    <h2 class="display">Packing List</h2>
+    <p class="lede">Built from the itinerary: 7 nights at 7,200 ft, low-80s days and low-50s nights, a dawn balloon ride, a ladder climb at Bandelier, a half-mile uphill on Canyon Road, and seven dinners out. No laundry assumed. Packed for a single medium check-in.</p>
+
+    <p class="pack-actions">
+      <button type="button" class="pack-reset" id="pack-reset">Reset checklist</button>
+      <span class="pack-progress" id="pack-progress" aria-live="polite">0 of 0 packed</span>
+    </p>
+
+    <div class="pack-group">
+      <h3 class="grouphead">Daytime clothing · mix-and-match for 7 days</h3>
+      <ul class="pack-list" data-pack-group="day">
+        <li><label><input type="checkbox"><span>5 breathable daytime tops (linen, cotton, technical knit) — two will repeat</span></label></li>
+        <li><label><input type="checkbox"><span>1 long-sleeve UPF sun shirt for Bandelier and exposed gallery walks</span></label></li>
+        <li><label><input type="checkbox"><span>3 pairs lightweight pants or technical trousers</span></label></li>
+        <li><label><input type="checkbox"><span>2 pairs relaxed shorts or a casual skirt for Plaza days</span></label></li>
+        <li><label><input type="checkbox"><span>8 pairs underlayers (7 days + 1 spare)</span></label></li>
+        <li><label><input type="checkbox"><span>6 pairs everyday socks + 1 pair cushioned/athletic socks for the cliff day</span></label></li>
+      </ul>
+    </div>
+
+    <div class="pack-group">
+      <h3 class="grouphead">Layers · 30° day-to-night swing</h3>
+      <ul class="pack-list" data-pack-group="layers">
+        <li><label><input type="checkbox"><span>Light fleece or merino pullover for evenings</span></label></li>
+        <li><label><input type="checkbox"><span>Warm packable jacket for the dawn balloon (down or insulated shell)</span></label></li>
+        <li><label><input type="checkbox"><span>Pashmina or wrap — doubles as a dinner accessory and rooftop warmth</span></label></li>
+      </ul>
+    </div>
+
+    <div class="pack-group">
+      <h3 class="grouphead">Dinner outfits · 4 outfits cover 7 dinners</h3>
+      <ul class="pack-list" data-pack-group="dinner">
+        <li><label><input type="checkbox"><span>2 polished dinner outfits — dress or top + nice pants — for the Canyon Road dinners (Geronimo Fri Jun 5 &amp; Mon Jun 8, The Compound Thu Jun 4)</span></label></li>
+        <li><label><input type="checkbox"><span>1 resort-casual outfit for Luminaria (Sat Jun 6 &amp; farewell Tue Jun 9)</span></label></li>
+        <li><label><input type="checkbox"><span>1 smart-casual outfit for Anasazi the night of arrival — keep accessible at the top of the bag (Wed Jun 3)</span></label></li>
+        <li><label><input type="checkbox"><span>A relaxed top + jeans or a sundress for the Coyote rooftop (Sun Jun 7)</span></label></li>
+        <li><label><input type="checkbox"><span>One or two simple accessories (scarf, jewelry) to refresh repeated outfits</span></label></li>
+      </ul>
+    </div>
+
+    <div class="pack-group">
+      <h3 class="grouphead">Footwear · 3 pairs covers everything</h3>
+      <ul class="pack-list" data-pack-group="shoes">
+        <li><label><input type="checkbox"><span>Broken-in light hikers or trail runners — the workhorse pair. Closed-toe (required by Bandelier ladders and the balloon basket), grippy enough for the Plaza cobblestones and Canyon Road uphill. Wear on the plane.</span></label></li>
+        <li><label><input type="checkbox"><span>Dressier flats or low-heel shoes for all 7 dinners — stiletto-unfriendly on Canyon Road</span></label></li>
+        <li><label><input type="checkbox"><span>Slip-ons or sandals for the inn, the pool, and easy days</span></label></li>
+      </ul>
+    </div>
+
+    <div class="pack-group">
+      <h3 class="grouphead">Sun &amp; altitude · UV ~25% stronger</h3>
+      <ul class="pack-list" data-pack-group="sun">
+        <li><label><input type="checkbox"><span>Wide-brim hat (chin strap helpful for the balloon)</span></label></li>
+        <li><label><input type="checkbox"><span>Polarized sunglasses</span></label></li>
+        <li><label><input type="checkbox"><span>SPF 50 sunscreen + a travel-size for reapplying in the daypack</span></label></li>
+        <li><label><input type="checkbox"><span>SPF lip balm</span></label></li>
+        <li><label><input type="checkbox"><span>Refillable water bottle — at least 1L (inn has a filling station; 2L target for Bandelier)</span></label></li>
+        <li><label><input type="checkbox"><span>Heavy moisturizer + thick hand cream (high desert is very dry)</span></label></li>
+        <li><label><input type="checkbox"><span>Light snacks for the cliff day (lunch is provided by Vigilante, but trail snacks help between sites)</span></label></li>
+      </ul>
+    </div>
+
+    <div class="pack-group">
+      <h3 class="grouphead">Bags</h3>
+      <ul class="pack-list" data-pack-group="daybag">
+        <li><label><input type="checkbox"><span>Small daypack for Bandelier (carries water, snacks, layer, sunscreen)</span></label></li>
+        <li><label><input type="checkbox"><span>Crossbody or light shoulder bag for the Plaza and Canyon Road</span></label></li>
+        <li><label><input type="checkbox"><span>Foldable tote for any gallery purchases</span></label></li>
+      </ul>
+    </div>
+
+    <p class="ess-note">Expert-packer notes: wear the bulkiest items on the plane (hikers + fleece). Use packing cubes; expect 30–40 L compressed — a medium check-in is plenty. The arrival-night outfit (Anasazi) should be at the top of the bag for easy access. Checklist saves to this device automatically.</p>
+  </section>
+
+</main>
+
+
+<footer class="footer">
+  <p>Santa Fe · 3 — 10 June 2026 · Case Study by Barrier Island Digital</p>
+  <p class="footer-sub">A sample build by Barrier Island Digital, LLC</p>
+  <div class="footer-brand">
+    <span class="footer-brand-eyebrow">Powered by</span>
+    <img class="footer-brand-mark" src="img/brand-wordmark.png?v=20260608-e5b1510" alt="Barrier Island Digital, LLC" width="1100" height="295" loading="lazy" decoding="async" />
+  </div>
+</footer>
+
+
+<script>
+(function(){
+  // =====================================================================
+  // SANTA FE ITINERARY — NAVIGATION + SCROLL SPY
+  //
+  // Architecture:
+  //   - There are TWO navigation modes, not one tablist:
+  //       1. The DAY FEED (#day-feed) is a continuous stacked scroll of
+  //          all 7 days. Default landing view. User scrolls naturally from
+  //          Wed through Tue with no taps.
+  //       2. Five REFERENCE VIEWS (.tab-panel[data-panel]) — condensed,
+  //          essentials, logistics, dining, activities — are switcher tabs.
+  //          Opening one HIDES the day feed and shows that panel.
+  //   - Day pills (anchor <a>) link to #day-wed, #day-thu, etc. Clicking
+  //     restores the day feed (if needed) and instantly scrolls to that day.
+  //   - View tabs are <button> with data-view; clicking hides day feed and
+  //     shows that panel.
+  //   - Scroll-spy updates the active day pill as the user scrolls.
+  //   - One router function handles initial load, hash changes, pill clicks,
+  //     and [data-tab-link] clicks. No multiple entry points to desync.
+  // =====================================================================
+
+  const dayFeed   = document.getElementById('day-feed');
+  const daySections = Array.from(document.querySelectorAll('#day-feed .day-section'));
+  const dayPills  = Array.from(document.querySelectorAll('.tab-day'));
+  const viewPills = Array.from(document.querySelectorAll('.tab-view'));
+  const viewPanels = document.querySelectorAll('.tab-panel[data-panel]');
+  const tabnav    = document.querySelector('.tabnav');
+  const DAY_ORDER = ['wed','thu','fri','sat','sun','mon','tue'];
+
+  // ---- Date-aware default (which day to land on) ----
+  const tripDays = {
+    '2026-06-03':'wed','2026-06-04':'thu','2026-06-05':'fri',
+    '2026-06-06':'sat','2026-06-07':'sun','2026-06-08':'mon',
+    '2026-06-09':'tue','2026-06-10':'tue'
+  };
+  function todayInSantaFe(){
+    try {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: 'America/Denver',
+        year: 'numeric', month: '2-digit', day: '2-digit'
+      }).formatToParts(new Date());
+      const y = parts.find(p=>p.type==='year').value;
+      const m = parts.find(p=>p.type==='month').value;
+      const d = parts.find(p=>p.type==='day').value;
+      return y+'-'+m+'-'+d;
+    } catch(e){ return null; }
+  }
+  function dateAwareDay(){
+    const iso = todayInSantaFe();
+    return (iso && tripDays[iso]) || 'wed';
+  }
+
+  // ---- Measured nav height as CSS variable ----
+  // The sticky nav has two rows on mobile; height changes with viewport width,
+  // text size, and address-bar collapse. Measure live and publish to CSS so
+  // scroll-margin-top stays accurate.
+  function publishNavHeight(){
+    if (!tabnav) return;
+    const h = Math.round(tabnav.getBoundingClientRect().height);
+    if (h > 0) document.documentElement.style.setProperty('--nav-h', h + 'px');
+  }
+  publishNavHeight();
+  window.addEventListener('resize', publishNavHeight);
+  if (window.ResizeObserver && tabnav) {
+    new ResizeObserver(publishNavHeight).observe(tabnav);
+  }
+
+  // ---- Active-state helpers ----
+  let _currentDayActive = null;
+  function setDayActive(name){
+    // No-op if nothing changed. Scroll-spy may call this every rAF; without
+    // this guard we re-toggle classes and re-mutate scrollLeft constantly,
+    // which on iOS Chrome shows as a page-bottom vibration during overscroll.
+    if (_currentDayActive === name) return;
+    _currentDayActive = name;
+
+    dayPills.forEach(p => {
+      const on = p.dataset.day === name;
+      p.classList.toggle('is-active', on);
+      if (on) p.setAttribute('aria-current','page'); else p.removeAttribute('aria-current');
+    });
+    // Also de-highlight any view pills (we're in feed mode)
+    viewPills.forEach(p => {
+      p.classList.remove('is-active');
+      if (p.getAttribute('aria-current') === 'page') p.removeAttribute('aria-current');
+      if (p.getAttribute('aria-selected') === 'true') p.setAttribute('aria-selected','false');
+    });
+    // Keep the active pill visible horizontally inside its nav row — ONLY
+    // horizontally, with a 2px deadband so subpixel measurements don't
+    // trigger needless scroll mutations.
+    const active = document.querySelector('.tab-day.is-active');
+    if (active) {
+      const row = active.parentElement;
+      if (row && row.scrollWidth > row.clientWidth) {
+        const aRect = active.getBoundingClientRect();
+        const rRect = row.getBoundingClientRect();
+        const pad = 16;
+        let delta = 0;
+        if (aRect.left < rRect.left + pad) {
+          delta = (aRect.left - rRect.left) - pad;
+        } else if (aRect.right > rRect.right - pad) {
+          delta = (aRect.right - rRect.right) + pad;
+        }
+        if (Math.abs(delta) > 2) {
+          row.scrollLeft += delta;
+        }
+      }
+    }
+  }
+  function setViewActive(name){
+    _currentDayActive = null; // leaving feed mode
+    dayPills.forEach(p => {
+      p.classList.remove('is-active');
+      p.removeAttribute('aria-current');
+    });
+    viewPills.forEach(p => {
+      const on = p.dataset.view === name;
+      p.classList.toggle('is-active', on);
+      if (on) {
+        p.setAttribute('aria-current','page');
+        if (p.getAttribute('role') === 'tab') p.setAttribute('aria-selected','true');
+      } else {
+        p.removeAttribute('aria-current');
+        if (p.getAttribute('role') === 'tab') p.setAttribute('aria-selected','false');
+      }
+    });
+    // Horizontal-only keep-in-view (same iOS-safe approach as setDayActive)
+    const active = document.querySelector('.tab-view.is-active');
+    if (active) {
+      const row = active.parentElement;
+      if (row && row.scrollWidth > row.clientWidth) {
+        const aRect = active.getBoundingClientRect();
+        const rRect = row.getBoundingClientRect();
+        const pad = 16;
+        if (aRect.left < rRect.left + pad) {
+          row.scrollLeft += (aRect.left - rRect.left) - pad;
+        } else if (aRect.right > rRect.right - pad) {
+          row.scrollLeft += (aRect.right - rRect.right) + pad;
+        }
+      }
+    }
+  }
+
+  // ---- Show/hide modes ----
+  function showFeed(){
+    if (dayFeed) dayFeed.removeAttribute('hidden');
+    viewPanels.forEach(p => p.setAttribute('hidden',''));
+  }
+  function showView(name){
+    if (dayFeed) dayFeed.setAttribute('hidden','');
+    viewPanels.forEach(p => {
+      const on = p.dataset.panel === name;
+      if (on) p.removeAttribute('hidden'); else p.setAttribute('hidden','');
+    });
+  }
+
+  // ---- Programmatic-scroll lockout for scroll-spy ----
+  // When we programmatically scroll to a day, suppress scroll-spy updates
+  // briefly so the scroll-spy doesn't fight the target choice.
+  let scrollLockUntil = 0;
+  let scrollLockTarget = null;
+  function lockScrollSpy(target){
+    scrollLockTarget = target;
+    scrollLockUntil = Date.now() + 700; // generous upper bound
+  }
+  function isLocked(){
+    return Date.now() < scrollLockUntil;
+  }
+
+  // ---- The router: ONE entry point for navigation intent ----
+  function route(intent, opts){
+    opts = opts || {};
+    const writeHash = !!opts.writeHash;
+    if (intent.type === 'day') {
+      showFeed();
+      setDayActive(intent.name);
+      const section = document.getElementById('day-' + intent.name);
+      if (section) {
+        lockScrollSpy(intent.name);
+        // Two-step scroll: scrollIntoView for correct offset (uses CSS
+        // scroll-margin-top), then a hard window.scrollTo as fallback.
+        try {
+          section.scrollIntoView({ block:'start', behavior:'auto' });
+        } catch(e){
+          const navH = tabnav ? tabnav.getBoundingClientRect().height : 96;
+          const y = section.getBoundingClientRect().top + window.scrollY - navH - 8;
+          window.scrollTo(0, Math.max(0, y));
+        }
+      }
+      if (writeHash) {
+        try { history.replaceState(null, '', '#day-' + intent.name); } catch(e){}
+      }
+    } else if (intent.type === 'view') {
+      showView(intent.name);
+      setViewActive(intent.name);
+      // Scroll to the top of the panel so the heading is visible under the nav
+      const panel = document.querySelector('.tab-panel[data-panel="'+intent.name+'"]');
+      if (panel) {
+        const navH = tabnav ? tabnav.getBoundingClientRect().height : 96;
+        const y = panel.getBoundingClientRect().top + window.scrollY - navH - 8;
+        window.scrollTo(0, Math.max(0, y));
+      }
+      if (writeHash) {
+        try { history.replaceState(null, '', '#view-' + intent.name); } catch(e){}
+      }
+    }
+  }
+
+  // ---- Wire up day pill anchors ----
+  // Override default anchor behavior to keep instant (no smooth-scroll) and
+  // to update active state immediately. Anchors still degrade gracefully
+  // (default browser behavior) if JS fails.
+  dayPills.forEach(pill => {
+    pill.addEventListener('click', e => {
+      e.preventDefault();
+      route({ type:'day', name: pill.dataset.day }, { writeHash: true });
+    });
+  });
+
+  // ---- Wire up view pills ----
+  viewPills.forEach(pill => {
+    pill.addEventListener('click', e => {
+      e.preventDefault();
+      route({ type:'view', name: pill.dataset.view }, { writeHash: true });
+    });
+  });
+
+  // ---- Wire up [data-tab-link] inline anchors (legacy from condensed view) ----
+  document.querySelectorAll('[data-tab-link]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const name = a.dataset.tabLink;
+      // condensed/essentials/logistics/dining/activities = views; day names = days
+      if (DAY_ORDER.indexOf(name) !== -1) {
+        route({ type:'day', name: name }, { writeHash: true });
+      } else {
+        route({ type:'view', name: name }, { writeHash: true });
+      }
+    });
+  });
+
+  // ---- Scroll-spy: highlight the active day pill as user scrolls ----
+  // Sentinel-based logic: active day = the LAST day whose top has crossed
+  // below the bottom of the sticky nav. Not ratio-based. Reads measured
+  // nav height live so it works regardless of nav row count.
+  let spyTicking = false;
+  function updateActiveDayFromScroll(){
+    spyTicking = false;
+    if (!dayFeed || dayFeed.hasAttribute('hidden')) return;
+    if (isLocked()) {
+      // Force the target during the lockout to avoid flicker
+      if (scrollLockTarget) {
+        const cur = document.querySelector('.tab-day.is-active');
+        if (!cur || cur.dataset.day !== scrollLockTarget) {
+          setDayActive(scrollLockTarget);
+        }
+      }
+      return;
+    }
+    const navH = tabnav ? tabnav.getBoundingClientRect().height : 96;
+    const cutoff = navH + 8; // a section is "active" once its top is at/above this
+    let activeName = daySections[0] ? daySections[0].dataset.day : 'wed';
+    for (let i = 0; i < daySections.length; i++) {
+      const top = daySections[i].getBoundingClientRect().top;
+      if (top <= cutoff) {
+        activeName = daySections[i].dataset.day;
+      } else {
+        break;
+      }
+    }
+    const cur = document.querySelector('.tab-day.is-active');
+    if (!cur || cur.dataset.day !== activeName) {
+      setDayActive(activeName);
+    }
+  }
+  function onScroll(){
+    if (spyTicking) return;
+    spyTicking = true;
+    requestAnimationFrame(updateActiveDayFromScroll);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  // Also recompute when user touches/clicks (clears lockout naturally)
+  ['touchstart','pointerdown'].forEach(evt => {
+    window.addEventListener(evt, () => {
+      // If user is interacting AFTER our programmatic scroll settled, clear lock
+      if (Date.now() > scrollLockUntil - 500) {
+        scrollLockUntil = 0;
+      }
+    }, { passive: true });
+  });
+
+  // ---- Hash router: parse location.hash on initial load + future hashchange ----
+  function intentFromHash(hash){
+    if (!hash) return null;
+    let m;
+    if ((m = hash.match(/^#day-(wed|thu|fri|sat|sun|mon|tue)$/))) {
+      return { type:'day', name: m[1] };
+    }
+    if ((m = hash.match(/^#view-(condensed|essentials|logistics|dining|activities)$/))) {
+      return { type:'view', name: m[1] };
+    }
+    // Backwards compatibility: old #tab-XXX hashes from previous architecture
+    if ((m = hash.match(/^#tab-(wed|thu|fri|sat|sun|mon|tue)$/))) {
+      return { type:'day', name: m[1] };
+    }
+    if ((m = hash.match(/^#tab-(condensed|essentials|logistics|dining|activities)$/))) {
+      return { type:'view', name: m[1] };
+    }
+    return null;
+  }
+
+  function initialRoute(){
+    const fromHash = intentFromHash(location.hash);
+    if (fromHash) {
+      route(fromHash, { writeHash: false });
+      return;
+    }
+    // No hash: before the trip starts (pre-Jun 3, 2026 Santa Fe time),
+    // land on the hero. From Jun 3 onward, land on today's day in the feed.
+    const todayIso = todayInSantaFe();
+    const tripStart = '2026-06-03';
+    if (todayIso && todayIso < tripStart) {
+      // Pre-trip: leave hero visible at top. Still set the default active pill
+      // (Wed) so the tabnav state is correct when the user does scroll down,
+      // but DO NOT scroll to the day section.
+      showFeed();
+      setDayActive('wed');
+      window.scrollTo(0, 0);
+      return;
+    }
+    // On-trip or post-trip: land on today's day in the feed (or Wed fallback)
+    route({ type:'day', name: dateAwareDay() }, { writeHash: false });
+  }
+
+  window.addEventListener('hashchange', () => {
+    const i = intentFromHash(location.hash);
+    if (i) route(i, { writeHash: false });
+  });
+
+  // ---- Initial load sequence (fixes stale-pill issue) ----
+  // 1) Set target active state.
+  // 2) Show feed/view.
+  // 3) Wait one animation frame so layout is final.
+  // 4) Do the instant scroll.
+  // 5) Scroll-spy listener is already attached but lockScrollSpy ensures it
+  //    doesn't override during the initial scroll.
+  requestAnimationFrame(() => {
+    publishNavHeight(); // re-measure after first paint
+    initialRoute();
+  });
+
+  // ===== Date-aware flight status =====
+  // For flights with data-date attribute, update badge based on today's date in Santa Fe.
+  function updateFlightStatuses(){
+    const todayIso = todayInSantaFe();
+    if (!todayIso) return;
+    document.querySelectorAll('tr[data-date]').forEach(row => {
+      const rowDate = row.dataset.date;
+      const badge = row.querySelector('.ah-badge');
+      if (!badge) return;
+      if (rowDate < todayIso) {
+        // Past flight
+        badge.className = 'ah-badge arr';
+        badge.textContent = 'Arr';
+        row.classList.add('ah-past');
+      } else if (rowDate === todayIso) {
+        badge.className = 'ah-badge now';
+        badge.textContent = 'Today';
+        row.classList.remove('ah-past');
+      } else {
+        badge.className = 'ah-badge sched';
+        badge.textContent = 'Sched';
+        row.classList.remove('ah-past');
+      }
+    });
+  }
+  updateFlightStatuses();
+
+  // ===== Live flight status (FlightAware AeroAPI via Pages Function) =====
+  // Auto-fetches on page load + every visibilitychange (so opening the PWA
+  // re-checks instantly). Cache is at the edge (3 min) so polling is cheap.
+  // Silently no-ops if the Worker is unreachable (offline, deploy gap).
+  const FLIGHT_STATUS_ENDPOINT = 'https://flight-status.jhwiv-online.workers.dev/';
+  const LIVE_STATUS_LABELS = {
+    sched:   { bg: '#eff6ff', fg: '#1e40af', label: 'Sched' },
+    ontime:  { bg: '#dcfce7', fg: '#166534', label: 'On Time' },
+    delayed: { bg: '#fef3c7', fg: '#92400e', label: 'Delayed' },
+    now:     { bg: '#fef3c7', fg: '#92400e', label: 'Now' },
+    done:    { bg: '#dcfce7', fg: '#166534', label: 'Arrived' },
+    cancel:  { bg: '#fee2e2', fg: '#991b1b', label: 'Cancelled' },
+  };
+
+  function fmtTimeFromIso(iso, tz){
+    if (!iso) return null;
+    try {
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: tz || 'America/Denver',
+        hour: 'numeric', minute: '2-digit', hour12: true
+      }).format(new Date(iso));
+    } catch { return null; }
+  }
+
+  // Short timezone label for display next to flight times. Returns ET / CT
+  // / MT / PT (DST-agnostic) so users can tell at a glance which local
+  // clock the time refers to. Falls back to the raw Intl short name if the
+  // zone isn't one of the common US zones.
+  function tzAbbr(tz, refDate){
+    if (!tz) return '';
+    try {
+      const d = refDate instanceof Date ? refDate : (refDate ? new Date(refDate) : new Date());
+      const parts = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'short' }).formatToParts(d);
+      const raw = parts.find(p => p.type === 'timeZoneName')?.value || '';
+      // Normalize EDT/EST -> ET, CDT/CST -> CT, etc.
+      const m = raw.match(/^([ECMP])[DS]T$/);
+      if (m) return m[1] + 'T';
+      return raw;
+    } catch { return ''; }
+  }
+
+  // Convert an airline-schedule wall time ("3:45 PM") on a given date in a
+  // given tz into the same wall time with a short tz suffix ("3:45 PM CT").
+  function withTzLabel(wallTime, dateStr, tz){
+    if (!wallTime) return wallTime;
+    const label = tzAbbr(tz, dateStr ? `${dateStr}T12:00:00Z` : undefined);
+    return label ? `${wallTime} ${label}` : wallTime;
+  }
+
+  function liveTzForRow(row){
+    // dep cell tz = origin, arr cell tz = destination — simplest is to infer
+    // by route text. We just use Denver/NY/Chicago lookups for known airports.
+    const route = (row.querySelector('.ah-route')?.textContent || '').toUpperCase();
+    if (route.includes('SAF')) return { dep: route.startsWith('SAF') ? 'America/Denver' : 'America/Chicago', arr: route.endsWith('SAF') ? 'America/Denver' : 'America/Chicago' };
+    if (route.includes('AVL')) return { dep: route.startsWith('AVL') ? 'America/New_York' : 'America/Chicago', arr: route.endsWith('AVL') ? 'America/New_York' : 'America/Chicago' };
+    return { dep: 'America/Chicago', arr: 'America/Chicago' };
+  }
+
+  async function fetchLiveStatusForRow(row){
+    const ident = row.dataset.ident;
+    const date = row.dataset.date;
+    if (!ident || !date) return;
+    // Pass origin/destination so the Worker can disambiguate multi-leg
+    // flight numbers (e.g. AA 6295 flies DFW→SAF AND SAF→DFW same day).
+    const origin = row.dataset.origin || '';
+    const dest = row.dataset.destination || '';
+    const qs = new URLSearchParams({ ident, date });
+    if (origin) qs.set('origin', origin);
+    if (dest)   qs.set('destination', dest);
+    let data;
+    try {
+      const res = await fetch(`${FLIGHT_STATUS_ENDPOINT}?${qs.toString()}`, { cache: 'no-cache' });
+      if (!res.ok) return;
+      data = await res.json();
+    } catch { return; }
+    if (!data || !data.ok) return;
+    applyLiveStatusToRow(row, data);
+  }
+
+  function applyLiveStatusToRow(row, data){
+    const level = LIVE_STATUS_LABELS[data.statusLevel] || LIVE_STATUS_LABELS.sched;
+    const badge = row.querySelector('.ah-badge');
+    if (badge) {
+      badge.textContent = data.status || level.label;
+      badge.style.background = level.bg;
+      badge.style.color = level.fg;
+      // Clear old class-based colors so inline style wins consistently
+      badge.className = 'ah-badge';
+    }
+
+    const tz = liveTzForRow(row);
+    const depCell = row.querySelector('[data-cell="dep"]');
+    const arrCell = row.querySelector('[data-cell="arr"]');
+    const liveLine = row.querySelector('[data-cell="live"]');
+
+    const schedDep = row.dataset.schedDep;
+    const schedArr = row.dataset.schedArr;
+    const dateStrRow = row.dataset.date;
+    const liveDepRow = fmtTimeFromIso(data.estimatedOut || data.actualOut, tz.dep);
+    const liveArrRow = fmtTimeFromIso(data.estimatedIn || data.actualIn, tz.arr);
+    // tz label suffix for this row ("CT", "MT", "ET")
+    const depTzL = tzAbbr(tz.dep, dateStrRow ? `${dateStrRow}T12:00:00Z` : undefined);
+    const arrTzL = tzAbbr(tz.arr, dateStrRow ? `${dateStrRow}T12:00:00Z` : undefined);
+    const schedDepRow = depTzL ? `${schedDep} ${depTzL}` : schedDep;
+    const schedArrRow = arrTzL ? `${schedArr} ${arrTzL}` : schedArr;
+    const liveDep = liveDepRow ? (depTzL ? `${liveDepRow} ${depTzL}` : liveDepRow) : null;
+    const liveArr = liveArrRow ? (arrTzL ? `${liveArrRow} ${arrTzL}` : liveArrRow) : null;
+
+    // Departure cell: if updated, show NEW time on top with old crossed out
+    if (depCell) {
+      if (liveDep && liveDepRow !== schedDep && !data.cancelled) {
+        depCell.innerHTML = `<span class="ah-time-new">${liveDep}</span><br><span class="ah-time-old">${schedDepRow}</span>`;
+      } else {
+        depCell.textContent = schedDepRow;
+      }
+    }
+    if (arrCell) {
+      if (liveArr && liveArrRow !== schedArr && !data.cancelled) {
+        arrCell.innerHTML = `<span class="ah-time-new">${liveArr}</span><br><span class="ah-time-old">${schedArrRow}</span>`;
+      } else {
+        arrCell.textContent = schedArrRow;
+      }
+    }
+
+    // Live line under the seat info
+    if (liveLine) {
+      const parts = [];
+      if (data.cancelled) {
+        parts.push('<strong style="color:#991b1b;">Cancelled — call AA</strong>');
+      } else if (data.diverted) {
+        parts.push('<strong style="color:#991b1b;">Diverted</strong>');
+      } else {
+        if (data.delayMinutes >= 15) {
+          const hrs = Math.floor(data.delayMinutes / 60);
+          const mins = data.delayMinutes % 60;
+          const dur = hrs ? `${hrs}h ${mins}m` : `${mins} min`;
+          parts.push(`<strong style="color:#92400e;">+${dur} delay</strong>`);
+        }
+        if (data.gateOrigin) parts.push(`Gate ${data.gateOrigin}`);
+        else if (data.terminalOrigin) parts.push(`Terminal ${data.terminalOrigin}`);
+      }
+      liveLine.innerHTML = parts.length ? '<br>' + parts.join(' · ') : '';
+    }
+  }
+
+  // Cache the latest live data per row so the hero card can read it.
+  const liveDataByRow = new Map();
+  const _origApplyLiveStatus = applyLiveStatusToRow;
+  applyLiveStatusToRow = function(row, data){
+    liveDataByRow.set(row, data);
+    _origApplyLiveStatus(row, data);
+  };
+
+  // ===== Hero flight card =====
+  // Show when (a) current US/Eastern date matches a flight day AND any flight
+  // is still pre-arrival, OR (b) we're within 24h of the first scheduled
+  // departure. Hide once all that day's flights show 'Arrived' (statusLevel='done').
+  const heroCard = document.getElementById('hero-flight-card');
+  const heroFlightsEl = document.getElementById('hfc-flights');
+  const heroEyebrowEl = document.getElementById('hfc-eyebrow');
+
+  function todayInTz(tz){
+    return new Intl.DateTimeFormat('en-CA', { timeZone: tz, year:'numeric', month:'2-digit', day:'2-digit' }).format(new Date());
+  }
+
+  function schedDateTimeForRow(row){
+    // Build a JS Date for the scheduled departure in the origin TZ so we can
+    // do a T-24h window comparison. Falls back to noon UTC of the date if parse fails.
+    const date = row.dataset.date;
+    const dep = row.dataset.schedDep; // e.g. "7:00 AM"
+    const tz = liveTzForRow(row).dep;
+    if (!date || !dep) return null;
+    const m = dep.match(/^(\d{1,2}):(\d{2})\s*([AP]M)$/i);
+    if (!m) return null;
+    let h = parseInt(m[1], 10);
+    const min = parseInt(m[2], 10);
+    const pm = /pm/i.test(m[3]);
+    if (pm && h !== 12) h += 12;
+    if (!pm && h === 12) h = 0;
+    // Construct local-tz wall time, then convert. Simplest: treat the wall time
+    // as if in the origin TZ by building an ISO string and using Intl tz math.
+    // For our purposes (T-24h check), a coarse approach: assume origin TZ offset
+    // is roughly America/New_York (-04:00) or America/Chicago (-05:00) on this date.
+    // We just construct from UTC with the right offset for the known airports.
+    const offsets = { 'America/New_York': '-04:00', 'America/Chicago': '-05:00', 'America/Denver': '-06:00' };
+    const off = offsets[tz] || '-05:00';
+    return new Date(`${date}T${String(h).padStart(2,'0')}:${String(min).padStart(2,'0')}:00${off}`);
+  }
+
+  function renderHeroFlightCard(){
+    if (!heroCard || !heroFlightsEl) return;
+    const allRows = Array.from(document.querySelectorAll('tr[data-ident]'));
+    if (!allRows.length) { heroCard.hidden = true; return; }
+
+    // Today in US/Eastern (home TZ — controls the calendar concept of "today")
+    const todayET = todayInTz('America/New_York');
+    const now = Date.now();
+    const T_MINUS_24H = 24 * 60 * 60 * 1000;
+
+    // Find rows for today, and rows whose scheduled departure is within T-24h
+    let dayDate = null;
+    let dayRows = [];
+
+    // Pass 1: any flight today?
+    const todayRows = allRows.filter(r => r.dataset.date === todayET);
+    if (todayRows.length) {
+      dayDate = todayET;
+      dayRows = todayRows;
+    } else {
+      // Pass 2: any flight within the next 24h?
+      const upcoming = allRows
+        .map(r => ({ row: r, dt: schedDateTimeForRow(r) }))
+        .filter(x => x.dt && (x.dt.getTime() - now) > 0 && (x.dt.getTime() - now) <= T_MINUS_24H)
+        .sort((a,b) => a.dt - b.dt);
+      if (upcoming.length) {
+        dayDate = upcoming[0].row.dataset.date;
+        dayRows = allRows.filter(r => r.dataset.date === dayDate);
+      }
+    }
+
+    if (!dayRows.length) { heroCard.hidden = true; return; }
+
+    // Hide if all of dayRows have data showing Arrived (statusLevel === 'done')
+    const dataList = dayRows.map(r => liveDataByRow.get(r));
+    const haveAnyData = dataList.some(Boolean);
+    if (haveAnyData) {
+      const allDone = dayRows.every(r => {
+        const d = liveDataByRow.get(r);
+        return d && d.statusLevel === 'done';
+      });
+      if (allDone) { heroCard.hidden = true; return; }
+    }
+
+    // Build eyebrow text
+    const isToday = dayDate === todayET;
+    const dayLabel = new Date(`${dayDate}T12:00:00Z`).toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric', timeZone: 'UTC' });
+    heroEyebrowEl.textContent = isToday ? `Today \u00b7 ${dayLabel}` : `Travel day \u00b7 ${dayLabel}`;
+
+    // Helper: compute delay in minutes between an ISO timestamp and the
+    // airline's officially scheduled wall time on the row. We trust the
+    // airline schedule (data-sched-dep/data-sched-arr) over AeroAPI's
+    // scheduled_off field, because AeroAPI's schedule data is sometimes
+    // off by 5-15 min compared to what the airline actually publishes.
+    function deltaMinutesVsSched(iso, schedWallTime, dateStr, tz){
+      if (!iso || !schedWallTime || !dateStr) return null;
+      const m = schedWallTime.match(/^(\d{1,2}):(\d{2})\s*([AP]M)$/i);
+      if (!m) return null;
+      let h = parseInt(m[1], 10);
+      const mi = parseInt(m[2], 10);
+      const pm = /pm/i.test(m[3]);
+      if (pm && h !== 12) h += 12;
+      if (!pm && h === 12) h = 0;
+      // Build the scheduled instant by formatting any reference date in tz
+      // and binary-searching offset is overkill; the simpler approach: produce
+      // an ISO with the local wall time as if it were UTC, then compute the
+      // tz offset for that day and subtract. We can use Intl to get the
+      // offset for the date.
+      try {
+        const refUtc = new Date(`${dateStr}T${String(h).padStart(2,'0')}:${String(mi).padStart(2,'0')}:00Z`);
+        // Get tz offset minutes for the date in tz
+        const fmt = new Intl.DateTimeFormat('en-US', { timeZone: tz, timeZoneName: 'shortOffset' });
+        const parts = fmt.formatToParts(refUtc);
+        const offsetPart = parts.find(p => p.type === 'timeZoneName')?.value || 'GMT+0';
+        const offMatch = offsetPart.match(/GMT([+-]\d{1,2})(?::?(\d{2}))?/);
+        const offHrs = offMatch ? parseInt(offMatch[1],10) : 0;
+        const offMin = offMatch && offMatch[2] ? parseInt(offMatch[2],10) * Math.sign(offHrs || 1) : 0;
+        const offsetMs = (offHrs * 60 + offMin) * 60 * 1000;
+        const schedInstant = refUtc.getTime() - offsetMs;
+        const liveInstant = new Date(iso).getTime();
+        return Math.round((liveInstant - schedInstant) / 60000);
+      } catch { return null; }
+    }
+
+    // Render each leg
+    const html = dayRows.map(row => {
+      const route = row.querySelector('.ah-route')?.textContent.replace(/\s+/g,' ').trim() || '';
+      const ident = (row.dataset.ident || '').replace(/^AAL?/, 'AA ');
+      const schedDep = row.dataset.schedDep;
+      const schedArr = row.dataset.schedArr;
+      const dateStr = row.dataset.date;
+      const data = liveDataByRow.get(row);
+      const tz = liveTzForRow(row);
+      const liveDepIso = data && (data.actualOut || data.estimatedOut);
+      const liveArrIso = data && (data.actualIn  || data.estimatedIn);
+      const liveDepRaw = fmtTimeFromIso(liveDepIso, tz.dep);
+      const liveArrRaw = fmtTimeFromIso(liveArrIso, tz.arr);
+      const depTzLabel = tzAbbr(tz.dep, dateStr ? `${dateStr}T12:00:00Z` : undefined);
+      const arrTzLabel = tzAbbr(tz.arr, dateStr ? `${dateStr}T12:00:00Z` : undefined);
+      const liveDep = liveDepRaw ? (depTzLabel ? `${liveDepRaw} ${depTzLabel}` : liveDepRaw) : null;
+      const liveArr = liveArrRaw ? (arrTzLabel ? `${liveArrRaw} ${arrTzLabel}` : liveArrRaw) : null;
+      const schedDepLbl = depTzLabel ? `${schedDep} ${depTzLabel}` : schedDep;
+      const schedArrLbl = arrTzLabel ? `${schedArr} ${arrTzLabel}` : schedArr;
+
+      // Compute delay vs airline schedule (NOT AeroAPI's scheduled_off).
+      const depDelay = deltaMinutesVsSched(liveDepIso, schedDep, dateStr, tz.dep);
+      const arrDelay = deltaMinutesVsSched(liveArrIso, schedArr, dateStr, tz.arr);
+      const isLate = (depDelay !== null && depDelay >= 15) || (arrDelay !== null && arrDelay >= 15);
+
+      // Status label: prefer AeroAPI's status when meaningful, but override
+      // when AeroAPI says "Scheduled" yet our delay calc shows on-time.
+      let statusLevel = data?.statusLevel || 'sched';
+      let statusLabel = data?.status || 'Sched';
+      if (data && !data.cancelled && !data.diverted) {
+        const aeroSays = (statusLabel || '').toLowerCase();
+        if (aeroSays === 'scheduled' || aeroSays === 'sched') {
+          if (!isLate) { statusLabel = 'On Time'; statusLevel = 'sched'; }
+        }
+      }
+
+      // Only strike-through scheduled times when there's a real delay.
+      const depShow = (isLate && liveDep && liveDepRaw !== schedDep)
+        ? `<span class="hfc-times">${liveDep}</span><span class="hfc-old">${schedDepLbl}</span>`
+        : `<span class="hfc-times">${schedDepLbl}</span>`;
+      const arrShow = (isLate && liveArr && liveArrRaw !== schedArr)
+        ? `<span class="hfc-times">${liveArr}</span><span class="hfc-old">${schedArrLbl}</span>`
+        : `<span class="hfc-times">${schedArrLbl}</span>`;
+
+      const detailBits = [];
+      if (data?.cancelled) detailBits.push('<strong style="color:#991b1b;">Cancelled</strong>');
+      else if (data?.diverted) detailBits.push('<strong style="color:#991b1b;">Diverted</strong>');
+      else {
+        // Use our locally-computed delay (vs airline schedule), not AeroAPI's.
+        const effDelay = Math.max(depDelay ?? 0, arrDelay ?? 0);
+        if (effDelay >= 15) {
+          const hrs = Math.floor(effDelay / 60);
+          const mins = effDelay % 60;
+          detailBits.push(`+${hrs ? hrs+'h ' : ''}${mins}m delay`);
+        }
+        if (data?.gateOrigin) detailBits.push(`Gate ${data.gateOrigin}`);
+      }
+      detailBits.push(ident);
+
+      return `
+        <div class="hfc-leg">
+          <span class="hfc-leg-route">${route}</span>
+          <span class="hfc-leg-meta">${depShow} <span style="opacity:.55">\u2192</span> ${arrShow}<span class="hfc-detail">${detailBits.join(' \u00b7 ')}</span></span>
+          <span class="hfc-leg-status" data-level="${statusLevel}">${statusLabel}</span>
+        </div>`;
+    }).join('');
+
+    heroFlightsEl.innerHTML = html;
+    heroCard.hidden = false;
+  }
+
+  // Render once on load (before any data arrives, so the card appears with
+  // scheduled times immediately) and again after each live refresh.
+  setTimeout(renderHeroFlightCard, 50);
+
+  let liveFetchInFlight = false;
+  let lastFetchAt = 0;
+  const STALE_MS         = 5 * 60 * 1000;   // 5 minutes -> show "Refreshing…" hint on return
+  const REFRESH_BTN_MS   = 3 * 60 * 1000;   // 3 minutes -> reveal manual refresh button
+  const POLL_MS          = 60 * 1000;       // 60s background poll while visible & in flight window
+  const BTN_TICK_MS      = 15 * 1000;       // re-evaluate button visibility every 15s
+
+  function updateRefreshButtonVisibility(){
+    const btn = document.getElementById('hfc-refresh');
+    if (!btn) return;
+    const cardVisible = heroCard && !heroCard.hidden;
+    const stale = lastFetchAt && (Date.now() - lastFetchAt > REFRESH_BTN_MS);
+    btn.hidden = !(cardVisible && stale);
+  }
+
+  function setHeroFootStamp(when){
+    const stampEl = document.getElementById('hfc-foot-stamp');
+    const msgEl   = document.getElementById('hfc-foot-msg');
+    if (!stampEl || !msgEl) return;
+    if (!when) { msgEl.textContent = 'Live status from FlightAware'; stampEl.textContent = ''; updateRefreshButtonVisibility(); return; }
+    const t = new Date(when);
+    const time = t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    msgEl.textContent = 'Live status from FlightAware · ';
+    stampEl.textContent = `updated ${time}`;
+    updateRefreshButtonVisibility();
+  }
+
+  function setHeroFootRefreshing(){
+    const stampEl = document.getElementById('hfc-foot-stamp');
+    const msgEl   = document.getElementById('hfc-foot-msg');
+    const btn = document.getElementById('hfc-refresh');
+    if (!stampEl || !msgEl) return;
+    msgEl.textContent = 'Refreshing…';
+    stampEl.textContent = '';
+    if (btn) btn.hidden = true;
+  }
+
+  async function refreshAllLiveStatuses(){
+    if (liveFetchInFlight) return;
+    liveFetchInFlight = true;
+    // If we're showing the hero card and the data is stale, show a subtle "Refreshing…" cue
+    if (heroCard && !heroCard.hidden && lastFetchAt && (Date.now() - lastFetchAt > STALE_MS)) {
+      setHeroFootRefreshing();
+    }
+    try {
+      const rows = Array.from(document.querySelectorAll('tr[data-ident]'));
+      await Promise.all(rows.map(fetchLiveStatusForRow));
+      lastFetchAt = Date.now();
+      const meta = document.querySelector('[data-live-meta]');
+      if (meta) {
+        const t = new Date();
+        const stamp = t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        meta.textContent = `Live status auto-refreshes from FlightAware on every app open. Last checked ${stamp}.`;
+      }
+      // Re-render the hero card now that we have fresh live data, then stamp it.
+      renderHeroFlightCard();
+      setHeroFootStamp(lastFetchAt);
+    } finally {
+      liveFetchInFlight = false;
+    }
+  }
+
+  // Stamp tz labels on the initial scheduled times so the user sees the
+  // local-time clarification ("ET" / "CT" / "MT") even before live data
+  // arrives. Re-applying after live data is fine — applyLiveStatusToRow
+  // overwrites with its own labeled value.
+  (function stampInitialTzLabels(){
+    Array.from(document.querySelectorAll('tr[data-ident]')).forEach(row => {
+      const tz = liveTzForRow(row);
+      const dateStr = row.dataset.date;
+      const depTzL = tzAbbr(tz.dep, dateStr ? `${dateStr}T12:00:00Z` : undefined);
+      const arrTzL = tzAbbr(tz.arr, dateStr ? `${dateStr}T12:00:00Z` : undefined);
+      const depCell = row.querySelector('[data-cell="dep"]');
+      const arrCell = row.querySelector('[data-cell="arr"]');
+      if (depCell && depTzL && !/\b[ECMP]T\b/.test(depCell.textContent)) {
+        depCell.textContent = `${row.dataset.schedDep} ${depTzL}`;
+      }
+      if (arrCell && arrTzL && !/\b[ECMP]T\b/.test(arrCell.textContent)) {
+        arrCell.textContent = `${row.dataset.schedArr} ${arrTzL}`;
+      }
+    });
+  })();
+
+  // Initial fetch (slight delay so tab paint is unblocked)
+  setTimeout(refreshAllLiveStatuses, 350);
+
+  // Belt-and-suspenders refresh on resume. iOS PWAs don't always fire
+  // visibilitychange when resuming from minimize — we also listen to
+  // pageshow (fired on bfcache restore) and window focus.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') refreshAllLiveStatuses();
+  });
+  window.addEventListener('pageshow', (e) => {
+    // bfcache restore OR fresh load — refresh either way
+    refreshAllLiveStatuses();
+  });
+  window.addEventListener('focus', () => {
+    // If data is older than the stale threshold, refresh on focus too.
+    if (!lastFetchAt || (Date.now() - lastFetchAt > STALE_MS)) refreshAllLiveStatuses();
+  });
+
+  // Background poll: every 60s while the page is visible AND the hero
+  // card is showing (i.e. we're inside the flight window). Cheap insurance
+  // so the card stays current even if the user leaves the app open on the hero.
+  setInterval(() => {
+    if (document.visibilityState !== 'visible') return;
+    if (!heroCard || heroCard.hidden) return;
+    refreshAllLiveStatuses();
+  }, POLL_MS);
+
+  // Tick: re-evaluate the manual refresh button every 15s so it appears
+  // organically once data crosses the 3-minute staleness line without
+  // needing any user interaction.
+  setInterval(updateRefreshButtonVisibility, BTN_TICK_MS);
+
+  // Wire the manual refresh button. Tapping forces an immediate refresh
+  // even if a poll is mid-flight (we just no-op the second one).
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('#hfc-refresh');
+    if (!btn) return;
+    e.preventDefault();
+    setHeroFootRefreshing();
+    refreshAllLiveStatuses();
+  });
+
+})();
+</script>
+
+<!-- ===== Install / Add-to-Home-Screen prompt (markup must precede the IIFE that wires it) ===== -->
+<div id="a2hs" class="a2hs" hidden>
+  <div class="a2hs-card">
+    <button class="a2hs-x" id="a2hs-dismiss" aria-label="Dismiss">×</button>
+    <div class="a2hs-icon"><img src="img/apple-touch-icon.png?v=20260608-e5b1510" alt="" width="56" height="56" /></div>
+    <div class="a2hs-body">
+      <p class="a2hs-kicker" id="a2hs-kicker">Out of office</p>
+      <h3 class="a2hs-title" id="a2hs-title">Make Santa Fe feel like an app</h3>
+      <p class="a2hs-msg" id="a2hs-msg">Add it to your Home Screen and the whole itinerary opens like a native app — full-screen, instant, and ready on the plane.</p>
+      <div class="a2hs-steps" id="a2hs-steps"></div>
+      <div class="a2hs-actions">
+        <button class="a2hs-link" id="a2hs-later">Got it</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== Hero countdown + Santa Fe local clock + live weather =====
+// Isolated IIFE: does not touch scroll/route logic. Reads data-* attrs only,
+// writes only into the dedicated meter/weather DOM nodes. Network failures
+// fail silently (the hardcoded baseline values remain).
+(function(){
+  const TRIP_START = '2026-06-03';     // first day in Santa Fe
+  const TRIP_END   = '2026-06-09';     // last full day (Tue)
+  const CHECKOUT   = '2026-06-10';     // checkout day
+  const TZ = 'America/Denver';         // Santa Fe local timezone
+
+  // ---- Date helpers ----
+  function sfTodayIso(){
+    try {
+      const parts = new Intl.DateTimeFormat('en-CA', {
+        timeZone: TZ, year:'numeric', month:'2-digit', day:'2-digit'
+      }).formatToParts(new Date());
+      const y = parts.find(p=>p.type==='year').value;
+      const m = parts.find(p=>p.type==='month').value;
+      const d = parts.find(p=>p.type==='day').value;
+      return y+'-'+m+'-'+d;
+    } catch(e){ return null; }
+  }
+  function sfClockHM(){
+    try {
+      return new Intl.DateTimeFormat('en-US', {
+        timeZone: TZ, hour:'numeric', minute:'2-digit', hour12:true
+      }).format(new Date());
+    } catch(e){ return ''; }
+  }
+  function daysBetween(isoA, isoB){
+    // Returns whole days isoB - isoA based on UTC midnight to avoid DST drift
+    const a = new Date(isoA + 'T00:00:00Z').getTime();
+    const b = new Date(isoB + 'T00:00:00Z').getTime();
+    return Math.round((b - a) / 86400000);
+  }
+
+  // ---- Countdown / day-of-trip badge ----
+  const meter   = document.getElementById('trip-meter');
+  const numEl   = document.getElementById('meter-num');
+  const lblEl   = document.getElementById('meter-lbl');
+  const cdCell  = document.getElementById('meter-countdown');
+  const clockEl = document.getElementById('meter-clock');
+
+  function refreshMeter(){
+    if (!meter || !numEl || !lblEl || !clockEl) return;
+    const today = sfTodayIso();
+    if (!today) return;
+    clockEl.textContent = sfClockHM();
+
+    if (today < TRIP_START) {
+      const d = daysBetween(today, TRIP_START);
+      numEl.textContent = d;
+      lblEl.textContent = d === 1 ? 'day until departure' : 'days until departure';
+      cdCell.classList.remove('is-onday');
+    } else if (today <= TRIP_END) {
+      const n = daysBetween(TRIP_START, today) + 1; // Day 1 on Wed Jun 3
+      numEl.textContent = 'Day ' + n + ' / 7';
+      lblEl.textContent = 'of your trip';
+      cdCell.classList.add('is-onday');
+    } else if (today === CHECKOUT) {
+      numEl.textContent = 'Departure';
+      lblEl.textContent = 'safe travels home';
+      cdCell.classList.add('is-onday');
+    } else {
+      numEl.textContent = '¡Adiós!';
+      lblEl.textContent = 'trip complete';
+      cdCell.classList.remove('is-onday');
+    }
+    meter.classList.add('is-ready');
+  }
+  refreshMeter();
+  // Re-tick the clock every 30s; only mutates meter cells, never layout-shifting other content.
+  setInterval(refreshMeter, 30000);
+
+  // ---- Live weather via open-meteo (no key) ----
+  // Only fetches for the next 7 days starting today. If the user's today is
+  // before TRIP_START, open-meteo's forecast range may not cover trip dates;
+  // the hardcoded baseline values already in the DOM stay in place.
+  // Santa Fe coords: 35.6870 N, -105.9378 W
+  const weatherBlocks = Array.from(document.querySelectorAll('.weather[data-weather-date]'));
+  if (!weatherBlocks.length) return;
+
+  const url = 'https://api.open-meteo.com/v1/forecast'
+    + '?latitude=35.6870&longitude=-105.9378'
+    + '&daily=temperature_2m_max,temperature_2m_min,weather_code'
+    + '&temperature_unit=fahrenheit'
+    + '&timezone=America/Denver'
+    + '&forecast_days=16';
+
+  function describeCode(code){
+    // WMO weather codes — condensed mapping
+    if (code === 0) return 'Clear sky';
+    if (code === 1) return 'Mainly clear';
+    if (code === 2) return 'Partly cloudy';
+    if (code === 3) return 'Overcast';
+    if (code === 45 || code === 48) return 'Foggy';
+    if (code >= 51 && code <= 57) return 'Drizzle';
+    if (code >= 61 && code <= 67) return 'Rain';
+    if (code >= 71 && code <= 77) return 'Snow';
+    if (code >= 80 && code <= 82) return 'Rain showers';
+    if (code >= 85 && code <= 86) return 'Snow showers';
+    if (code === 95) return 'Thunderstorm';
+    if (code === 96 || code === 99) return 'T-storm w/ hail';
+    return null;
+  }
+
+  fetch(url, { mode:'cors' })
+    .then(r => r.ok ? r.json() : null)
+    .then(data => {
+      if (!data || !data.daily || !Array.isArray(data.daily.time)) return;
+      const days = data.daily;
+      const idxFor = {};
+      days.time.forEach((d, i) => { idxFor[d] = i; });
+
+      weatherBlocks.forEach(block => {
+        const date = block.getAttribute('data-weather-date');
+        const i = idxFor[date];
+        if (i == null) return; // outside forecast horizon — keep baseline
+
+        const hi = Math.round(days.temperature_2m_max[i]);
+        const lo = Math.round(days.temperature_2m_min[i]);
+        const wc = days.weather_code[i];
+        const cond = describeCode(wc);
+
+        const hiEl   = block.querySelector('[data-weather-hi]');
+        const condEl = block.querySelector('[data-weather-cond]');
+        const lowEl  = block.querySelector('[data-weather-low]');
+
+        if (hiEl && !Number.isNaN(hi)) {
+          hiEl.innerHTML = hi + '°<span class="weather-unit">F</span>';
+        }
+        if (condEl && cond) {
+          condEl.textContent = cond + ' · live';
+        }
+        if (lowEl && !Number.isNaN(lo)) {
+          // Preserve sunrise/sunset/moon tail, only refresh the leading "Low XX°".
+          const txt = lowEl.textContent || '';
+          const tail = txt.replace(/^Low\s+\d+\u00b0?\s*·?\s*/, '');
+          lowEl.textContent = 'Low ' + lo + '° · ' + tail;
+        }
+      });
+    })
+    .catch(() => { /* offline / blocked — keep baseline */ });
+})();
+</script>
+
+<script>
+// ===== Add-to-Home-Screen onboarding nudge =====
+(function(){
+  const STORAGE_KEY = 'sf_a2hs_seen_v2';
+  // Skip if already running as installed PWA
+  const isStandalone =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+  if (isStandalone) return;
+
+  // Skip if user already dismissed or installed
+  let stored = null;
+  try { stored = localStorage.getItem(STORAGE_KEY); } catch(e){}
+  if (stored === 'dismissed' || stored === 'installed') return;
+
+  // Detect platform
+  const ua = navigator.userAgent || '';
+  const isIPad = /iPad/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isIPhone = /iPhone|iPod/.test(ua);
+  const isIOS = isIPad || isIPhone;
+  const isAndroid = /Android/.test(ua);
+  const isMobile = isIOS || isAndroid || /Mobile/.test(ua);
+
+  // Copy variants by device. Value-first: tell them why, then how.
+  const variants = {
+    iphone: {
+      kicker: 'Out of office',
+      title: 'Make Santa Fe feel like an app',
+      msg: 'Add it to your Home Screen and you get:<br>• One-tap launch — no hunting through browser tabs<br>• Full-screen view, no address bar<br>• Works offline on the plane and at altitude<br>• The whole trip, parked next to your email',
+      steps: [
+        'Tap the <strong>Share</strong> button (the square with the arrow).',
+        'Scroll and tap <strong>Add to Home Screen</strong>.',
+        'Tap <strong>Add</strong>. Done — vacation mode engaged.'
+      ]
+    },
+    ipad: {
+      kicker: 'Out of office',
+      title: 'Make Santa Fe feel like an app',
+      msg: 'Add it to your Home Screen and you get:<br>• One-tap launch — no hunting through browser tabs<br>• Full-screen view, no address bar<br>• Works offline in the air and at altitude<br>• The whole trip, parked next to your email',
+      steps: [
+        'Tap the <strong>Share</strong> button (the square with the arrow).',
+        'Scroll and tap <strong>Add to Home Screen</strong>.',
+        'Tap <strong>Add</strong>. Done — vacation mode engaged.'
+      ]
+    },
+    android: {
+      kicker: 'Out of office',
+      title: 'Make Santa Fe feel like an app',
+      msg: 'Install it to your Home Screen and you get:<br>• One-tap launch from your home screen<br>• Full-screen view, no browser chrome<br>• Works offline on the plane and at altitude<br>• The whole trip, parked next to your email',
+      steps: [
+        'Open your browser\'s menu (usually <strong>⋮</strong> or <strong>…</strong>).',
+        'Tap <strong>Install app</strong> or <strong>Add to Home screen</strong>.',
+        'Confirm. Done — vacation mode engaged.'
+      ]
+    },
+    desktop: {
+      kicker: 'Bookmark this',
+      title: 'Keep Santa Fe handy',
+      msg: 'Pin the tab here, but the full experience is even nicer on your phone — full-screen, offline-ready, one tap from your Home Screen.',
+      steps: [
+        'On your phone, open this site.',
+        'Use Share → Add to Home Screen so it\'s ready when you land.'
+      ]
+    }
+  };
+
+  let variant;
+  if (isIPad) variant = variants.ipad;
+  else if (isIPhone) variant = variants.iphone;
+  else if (isAndroid) variant = variants.android;
+  else if (!isMobile) variant = variants.desktop;
+  else variant = variants.iphone; // safe fallback for unknown mobile
+
+  // Card is purely instructional now. No install button, no native prompt
+  // wiring — the steps inside the card are the entire UI. Still listen for
+  // 'appinstalled' so we don't keep nagging users who installed via Chrome's
+  // own menu.
+  window.addEventListener('appinstalled', () => {
+    try { localStorage.setItem(STORAGE_KEY, 'installed'); } catch(e){}
+    const el = document.getElementById('a2hs');
+    if (el) el.setAttribute('hidden','');
+  });
+
+  function render(){
+    document.getElementById('a2hs-kicker').textContent = variant.kicker;
+    document.getElementById('a2hs-title').innerHTML = variant.title;
+    document.getElementById('a2hs-msg').innerHTML = variant.msg;
+    const stepsEl = document.getElementById('a2hs-steps');
+    stepsEl.innerHTML = '<ol class="a2hs-list">' +
+      variant.steps.map(s => '<li>' + s + '</li>').join('') +
+      '</ol>';
+  }
+
+  function show(){
+    render();
+    const el = document.getElementById('a2hs');
+    if (!el) return;
+    el.removeAttribute('hidden');
+    requestAnimationFrame(() => el.classList.add('a2hs-in'));
+  }
+  function dismiss(){
+    const el = document.getElementById('a2hs');
+    if (!el) return;
+    el.classList.remove('a2hs-in');
+    setTimeout(() => el.setAttribute('hidden',''), 220);
+    try { localStorage.setItem(STORAGE_KEY, 'dismissed'); } catch(e){}
+  }
+
+  // Wire up dismiss only — no install button anymore.
+  function wire(){
+    document.getElementById('a2hs-dismiss').addEventListener('click', dismiss);
+    document.getElementById('a2hs-later').addEventListener('click', dismiss);
+  }
+  wire();
+
+  // Show after a short delay so the hero is the first thing the user sees
+  setTimeout(show, 1400);
+})();
+</script>
+
+<script>
+// ===== PACKING LIST: persistence + progress =====
+(function(){
+  const panel = document.getElementById('tab-packing');
+  if (!panel) return;
+  const STORAGE_KEY = 'sf-packing-v1';
+  const checks = Array.from(panel.querySelectorAll('.pack-list input[type="checkbox"]'));
+  if (!checks.length) return;
+
+  // Assign a stable index-based id to each so order changes won't blow away state
+  checks.forEach((cb, i) => {
+    const group = cb.closest('[data-pack-group]')?.getAttribute('data-pack-group') || 'x';
+    cb.dataset.pkid = group + ':' + i;
+  });
+
+  // Restore saved state
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e) { saved = {}; }
+  checks.forEach(cb => { if (saved[cb.dataset.pkid]) cb.checked = true; });
+
+  const progress = document.getElementById('pack-progress');
+  function updateProgress(){
+    const done = checks.filter(c => c.checked).length;
+    if (progress) progress.textContent = done + ' of ' + checks.length + ' packed';
+    checks.forEach(c => {
+      const li = c.closest('li');
+      if (li) li.classList.toggle('is-packed', c.checked);
+    });
+  }
+  function save(){
+    const out = {};
+    checks.forEach(c => { if (c.checked) out[c.dataset.pkid] = 1; });
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(out)); } catch(e){}
+  }
+
+  checks.forEach(cb => {
+    cb.addEventListener('change', () => { save(); updateProgress(); });
+  });
+
+  const resetBtn = document.getElementById('pack-reset');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (!confirm('Clear all checked items on the packing list?')) return;
+      checks.forEach(c => { c.checked = false; });
+      try { localStorage.removeItem(STORAGE_KEY); } catch(e){}
+      updateProgress();
+    });
+  }
+
+  updateProgress();
+})();
+</script>
+
+<script>
+// ===== ACTIVITY TICKET LINKS: per-activity editable ticket URL =====
+(function(){
+  const STORAGE_KEY = 'santafe-activity-tickets-v1';
+  const slots = Array.from(document.querySelectorAll('.act-booking .act-ticket-slot'));
+  if (!slots.length) return;
+
+  // Optional hardcoded defaults the assistant can fill in later; the user can always override.
+  // Keyed by data-act-key on .act-booking. Leave entries blank/missing for empty slots.
+  const DEFAULTS = {
+    // bandelier: "",
+    walking:   "https://travelagents.viator.com/ticket?code=1759744975:2c5c0a19dc0b60f5fd20c97378685417ab83aeaa5e01bdd0e2ee271fa9d1cba0:1377027517",
+    canyon:    "https://travelagents.viator.com/ticket?code=1759747257:c8120be92d29c97d97d3547461ef8bd81d4f33d585a2386b1e38dbbc144b8f1d:1377029851",
+    sipsavor:  "https://travelagents.viator.com/ticket?code=1758606487:4bf74924da1354cb52b74e94eb696149435f316ddf64827efc4d7dfcd6700ead:1375875273",
+    // houser:    "",
+    balloon:   "https://travelagents.viator.com/ticket?code=1759749983:c7dfdf082d8e28b01cd09abdc841935492e54cfd04f0facef3ba6ba61b3aff0b:1377032631"
+  };
+
+  let saved = {};
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch(e){ saved = {}; }
+
+  function persist(){
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(saved)); } catch(e){}
+  }
+  function isValidUrl(s){
+    if (!s) return false;
+    try { const u = new URL(s); return u.protocol === 'http:' || u.protocol === 'https:'; } catch(e){ return false; }
+  }
+
+  slots.forEach(slot => {
+    const row = slot.closest('.act-booking');
+    const key = row?.dataset.actKey;
+    if (!key) return;
+
+    function hostLabel(url){
+      try {
+        const h = new URL(url).hostname.replace(/^www\./,'');
+        // Take the registrable bit (e.g. travelagents.viator.com -> viator.com).
+        const parts = h.split('.');
+        const reg = parts.length >= 2 ? parts.slice(-2).join('.') : h;
+        return reg.toUpperCase();
+      } catch(e){ return 'VOUCHER'; }
+    }
+    function render(){
+      slot.innerHTML = '';
+      const url = saved[key] || DEFAULTS[key] || '';
+      if (isValidUrl(url)) {
+        const br = row?.dataset.br || '';
+        const card = document.createElement('a');
+        card.className = 'act-ticket-card';
+        card.href = url; card.target = '_blank'; card.rel = 'noopener';
+        card.setAttribute('aria-label', 'Open voucher' + (br ? ' BR ' + br : '') + ' (opens in new tab)');
+
+        const stub = document.createElement('span');
+        stub.className = 'act-ticket-card__stub';
+        stub.textContent = hostLabel(url);
+
+        const notch = document.createElement('span');
+        notch.className = 'act-ticket-card__notch';
+        notch.setAttribute('aria-hidden', 'true');
+
+        const body = document.createElement('span');
+        body.className = 'act-ticket-card__body';
+        const eyebrow = document.createElement('span');
+        eyebrow.className = 'act-ticket-card__eyebrow';
+        eyebrow.textContent = 'Voucher';
+        const code = document.createElement('span');
+        code.className = 'act-ticket-card__code';
+        code.textContent = br ? ('BR ' + br) : 'View';
+        const cta = document.createElement('span');
+        cta.className = 'act-ticket-card__cta';
+        cta.textContent = 'Open \u2197';
+        body.append(eyebrow, code, cta);
+
+        card.append(stub, notch, body);
+
+        const edit = document.createElement('button');
+        edit.type = 'button'; edit.className = 'act-ticket-edit act-ticket-edit--ghost';
+        edit.textContent = 'edit link';
+        edit.addEventListener('click', () => openEditor(url));
+        slot.append(card, edit);
+      } else {
+        const btn = document.createElement('button');
+        btn.type = 'button'; btn.className = 'act-ticket-edit';
+        btn.textContent = '+ add ticket link';
+        btn.addEventListener('click', () => openEditor(''));
+        slot.append(btn);
+      }
+    }
+
+    function openEditor(current){
+      slot.innerHTML = '';
+      const input = document.createElement('input');
+      input.type = 'url'; input.className = 'act-ticket-input';
+      input.placeholder = 'Paste ticket URL (https://...)';
+      input.value = current || '';
+      const save = document.createElement('button');
+      save.type = 'button'; save.className = 'act-ticket-edit';
+      save.textContent = 'save';
+      const cancel = document.createElement('button');
+      cancel.type = 'button'; cancel.className = 'act-ticket-edit';
+      cancel.textContent = 'cancel';
+      const clear = document.createElement('button');
+      clear.type = 'button'; clear.className = 'act-ticket-edit';
+      clear.textContent = 'clear';
+      const err = document.createElement('span');
+      err.className = 'act-ticket-error';
+      err.setAttribute('role', 'alert');
+      err.hidden = true;
+      err.textContent = 'Needs https:// (or http://) at the start';
+      function showError(){
+        err.hidden = false;
+        input.setAttribute('aria-invalid', 'true');
+        input.classList.add('is-invalid');
+        input.focus();
+        // Don't select — user needs to edit, not retype
+      }
+      function clearError(){
+        err.hidden = true;
+        input.removeAttribute('aria-invalid');
+        input.classList.remove('is-invalid');
+      }
+      function commit(val){
+        const v = (val || '').trim();
+        if (v && !isValidUrl(v)) { showError(); return; }
+        if (v) saved[key] = v; else delete saved[key];
+        persist(); render();
+      }
+      input.addEventListener('input', clearError);
+      save.addEventListener('click', () => commit(input.value));
+      cancel.addEventListener('click', render);
+      clear.addEventListener('click', () => commit(''));
+      input.addEventListener('keydown', e => {
+        if (e.key === 'Enter') { e.preventDefault(); commit(input.value); }
+        if (e.key === 'Escape') { e.preventDefault(); render(); }
+      });
+      slot.append(input, save, cancel);
+      if (current) slot.append(clear);
+      slot.append(err);
+      input.focus();
+      // Only auto-select existing content (so paste replaces it), not the placeholder
+      if (current) input.select();
+    }
+
+    render();
+  });
+})();
+</script>
+
+<!-- ===== trip-restaurants picker (bundled module) ===== -->
+<script type="module">
+  // The module is a snapshot from github.com/jhwiv/trip-restaurants. See
+  // assets/restaurants/README.md for refresh instructions. We use ?v= query
+  // strings so the auto-cache-bust workflow can stamp fresh hashes on push.
+  import {
+    mountDiningTab,
+    mountReservationTimeline,
+  } from "./assets/restaurants/restaurants.js?v=20260608-e5b1510";
+
+  const STORAGE_KEY = 'santafe-itinerary-restaurants';
+
+  (async () => {
+    const diningMount   = document.getElementById('tr-dining-mount');
+    const timelineMount = document.getElementById('tr-timeline-mount');
+    if (!diningMount || !timelineMount) return;
+
+    let dataset;
+    try {
+      const res = await fetch("./assets/restaurants/santa-fe.json?v=20260608-e5b1510");
+      if (!res.ok) throw new Error('santa-fe.json HTTP ' + res.status);
+      dataset = await res.json();
+    } catch (err) {
+      console.error('[restaurants] failed to load dataset', err);
+      diningMount.innerHTML = '<p style="padding:16px;color:#a44d2b">Restaurant data failed to load. Use the per-day cards above the Dining tab as a fallback.</p>';
+      return;
+    }
+
+    mountDiningTab({ dataset, mount: diningMount, storageKey: STORAGE_KEY });
+
+    // ----- Nudge banner (disabled in demo build) -----
+    // The live app uses this banner to surface one-tap fixes for
+    // booking conflicts. The implementation is omitted from the demo.
+
+    const rebuildTimeline = () => {
+      timelineMount.innerHTML = '';
+      mountReservationTimeline({ dataset, mount: timelineMount, storageKey: STORAGE_KEY });
+    };
+    rebuildTimeline();
+
+    // ---- Sync Dining picks into each day section's dinner card ----
+    // Each day-section now has a NEUTRAL .rest-card-wrap.is-empty with no
+    // hardcoded restaurant. We render either:
+    //   - empty prompt ("No dinner picked yet — Choose in Dining →")
+    //   - the picked restaurant with name/address/phone/status badge
+    // Both states are clickable: tap to jump to Dining tab + open that night.
+    const dayDinnerSlots = Array.from(document.querySelectorAll('.day-section[data-day-date] .rest-card-wrap'));
+
+    function jumpToDiningNight(date) {
+      const diningTabBtn = document.getElementById('t-dining');
+      if (diningTabBtn) diningTabBtn.click();
+      setTimeout(() => {
+        const night = document.querySelector(`details.tr-night[data-date="${date}"]`);
+        if (night) {
+          if (night.tagName === 'DETAILS') night.open = true;
+          night.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          const mount = document.getElementById('tr-dining-mount');
+          if (mount) mount.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 120);
+    }
+
+    function buildEmptyCardContent() {
+      return '<div class="rest-empty-prompt">' +
+        '<span class="rest-empty-eyebrow">No dinner picked yet</span>' +
+        '<span class="rest-empty-cta">Choose in Dining →</span>' +
+      '</div>';
+    }
+
+    function escapeHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    }
+    function escapeAttr(s) { return escapeHtml(s); }
+    function buildCustomCardContent(custom) {
+      const name = escapeHtml(custom.name || 'Your reservation');
+      const time = custom.time ? '<span class="rest-addr">' + escapeHtml(custom.time) + '</span>' : '';
+      const conf = custom.confirmation ? '<span class="rest-edit-hint">Conf · ' + escapeHtml(custom.confirmation) + '</span>' : '';
+      const linkHtml = custom.url
+        ? '<a class="rest-phone" href="' + escapeAttr(custom.url) + '" target="_blank" rel="noopener" onclick="event.stopPropagation()">View reservation ↗</a>'
+        : '';
+      const badge = '<div class="dining-sync-badge is-booked"><span class="dsb-dot dsb-booked"></span>Added by you</div>';
+      return badge +
+        '<div class="rest-card-line">' +
+          '<span class="rest-name">' + name + '</span>' +
+          time +
+        '</div>' +
+        '<div class="rest-card-meta">' +
+          linkHtml +
+          (conf || '<span class="rest-edit-hint">Tap to edit →</span>') +
+        '</div>';
+    }
+
+    function buildPickedCardContent(r, isBooked, bookingInfo) {
+      const addrBits = [];
+      if (r.address) addrBits.push(r.address);
+      if (r.neighborhood && (!r.address || !r.address.toLowerCase().includes(r.neighborhood.toLowerCase()))) addrBits.push(r.neighborhood);
+      const addr = addrBits.join(' · ');
+      function formatPhone(raw) {
+        if (!raw) return '';
+        const d = raw.replace(/\D/g,'');
+        // US: 1XXXYYYZZZZ or XXXYYYZZZZ
+        if (d.length === 11 && d[0] === '1') return '(' + d.slice(1,4) + ') ' + d.slice(4,7) + '-' + d.slice(7);
+        if (d.length === 10) return '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+        return raw;
+      }
+      const phoneHtml = r.phone
+        ? '<a class="rest-phone" href="tel:' + r.phone.replace(/\D/g,'') + '" onclick="event.stopPropagation()">' + formatPhone(r.phone) + '</a>'
+        : '';
+      const badge = isBooked
+        ? '<div class="dining-sync-badge is-booked"><span class="dsb-dot dsb-booked"></span>Booked' + (bookingInfo?.confirmation ? ' · #' + bookingInfo.confirmation : '') + '</div>'
+        : '<div class="dining-sync-badge is-picked"><span class="dsb-dot dsb-picked"></span>Your pick from Dining</div>';
+      return badge +
+        '<div class="rest-card-line">' +
+          '<span class="rest-name">' + r.name + '</span>' +
+          (addr ? '<span class="rest-addr">' + addr + '</span>' : '') +
+        '</div>' +
+        '<div class="rest-card-meta">' +
+          phoneHtml +
+          '<span class="rest-edit-hint">Tap to change →</span>' +
+        '</div>';
+    }
+
+    function syncDayCards() {
+      let picks = {}, bookings = {}, customs = {};
+      try { picks    = JSON.parse(localStorage.getItem(`${STORAGE_KEY}-picks`)) || {}; } catch(_){ }
+      try { bookings = JSON.parse(localStorage.getItem(`${STORAGE_KEY}-bookings`)) || {}; } catch(_){ }
+      try { customs  = JSON.parse(localStorage.getItem(`${STORAGE_KEY}-customs`)) || {}; } catch(_){ }
+      for (const wrap of dayDinnerSlots) {
+        const date = wrap.getAttribute('data-day-date') || wrap.closest('.day-section')?.getAttribute('data-day-date');
+        if (!date) continue;
+        const custom = customs[date];
+        if (custom && custom.name) {
+          wrap.classList.remove('is-empty', 'is-picked');
+          wrap.classList.add('is-booked');
+          wrap.innerHTML = buildCustomCardContent(custom);
+          continue;
+        }
+        const pickId = picks[date];
+        const isBooked = !!bookings[date];
+        const bookingInfo = bookings[date];
+        if (!pickId) {
+          wrap.classList.add('is-empty');
+          wrap.classList.remove('is-picked', 'is-booked');
+          wrap.innerHTML = buildEmptyCardContent();
+          continue;
+        }
+        const r = (dataset.restaurants || []).find(x => x.id === pickId);
+        if (!r) {
+          wrap.classList.add('is-empty');
+          wrap.innerHTML = buildEmptyCardContent();
+          continue;
+        }
+        wrap.classList.remove('is-empty');
+        wrap.classList.toggle('is-booked', isBooked);
+        wrap.classList.toggle('is-picked', !isBooked);
+        wrap.innerHTML = buildPickedCardContent(r, isBooked, bookingInfo);
+      }
+    }
+
+    // Click + keyboard activation on every day dinner card — always jump to Dining
+    for (const wrap of dayDinnerSlots) {
+      wrap.addEventListener('click', (e) => {
+        // Let phone links work without jumping
+        if (e.target.closest('a.rest-phone')) return;
+        const date = wrap.getAttribute('data-day-date');
+        if (date) jumpToDiningNight(date);
+      });
+      wrap.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const date = wrap.getAttribute('data-day-date');
+          if (date) jumpToDiningNight(date);
+        }
+      });
+    }
+
+    // ---- Sync Dining picks into the Condensed Itinerary tab too ----
+    // Each "7:00p" dinner row in Condensed was previously hard-coded to the
+    // legacy seed restaurants (Anasazi/Compound/etc). Now those rows are
+    // neutral placeholders that render from localStorage, just like the day
+    // tabs.
+    const condDinnerRows = Array.from(document.querySelectorAll('.cond-dinner[data-cond-date]'));
+    function syncCondensedDinners() {
+      let picks = {}, bookings = {}, customs = {};
+      try { picks    = JSON.parse(localStorage.getItem(`${STORAGE_KEY}-picks`)) || {}; } catch(_){ }
+      try { bookings = JSON.parse(localStorage.getItem(`${STORAGE_KEY}-bookings`)) || {}; } catch(_){ }
+      try { customs  = JSON.parse(localStorage.getItem(`${STORAGE_KEY}-customs`)) || {}; } catch(_){ }
+      for (const row of condDinnerRows) {
+        const date = row.getAttribute('data-cond-date');
+        if (!date) continue;
+        const slot = row.querySelector('.cond-rest-slot');
+        if (!slot) continue;
+        const custom = customs[date];
+        if (custom && custom.name) {
+          row.classList.remove('is-empty', 'is-picked');
+          row.classList.add('is-booked');
+          const timeBit = custom.time ? '<span class="cond-addr"> · ' + escapeHtml(custom.time) + '</span>' : '';
+          slot.innerHTML = '<span class="cond-status-dot is-booked" title="Added by you"></span>' +
+            '<span class="cond-rest-name">' + escapeHtml(custom.name) + '</span>' + timeBit +
+            '<span class="cond-addr" style="opacity:.65"> · added by you</span>';
+          continue;
+        }
+        const pickId = picks[date];
+        const isBooked = !!bookings[date];
+        if (!pickId) {
+          row.classList.add('is-empty');
+          row.classList.remove('is-picked', 'is-booked');
+          slot.innerHTML = '<span class="cond-empty">Pick a restaurant <span class="cond-empty-cta">— Dining →</span></span>';
+          continue;
+        }
+        const r = (dataset.restaurants || []).find(x => x.id === pickId);
+        if (!r) {
+          row.classList.add('is-empty');
+          slot.innerHTML = '<span class="cond-empty">Pick a restaurant <span class="cond-empty-cta">— Dining →</span></span>';
+          continue;
+        }
+        row.classList.remove('is-empty');
+        row.classList.toggle('is-booked', isBooked);
+        row.classList.toggle('is-picked', !isBooked);
+        const addr = r.address || '';
+        const dot = isBooked
+          ? '<span class="cond-status-dot is-booked" title="Booked"></span>'
+          : '<span class="cond-status-dot is-picked" title="Picked, not yet booked"></span>';
+        slot.innerHTML = dot + '<span class="cond-rest-name">' + r.name + '</span>' + (addr ? '<span class="cond-addr"> · ' + addr + '</span>' : '');
+      }
+    }
+    for (const row of condDinnerRows) {
+      row.addEventListener('click', () => {
+        const date = row.getAttribute('data-cond-date');
+        if (date) jumpToDiningNight(date);
+      });
+      row.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          const date = row.getAttribute('data-cond-date');
+          if (date) jumpToDiningNight(date);
+        }
+      });
+    }
+
+    syncDayCards();
+    syncCondensedDinners();
+    // Rebuild timeline + sync day cards whenever the user interacts with the picker
+    diningMount.addEventListener('click', (e) => {
+      if (e.target.closest('button, a, summary, .tr-tier-row, .tr-tier-card, .tr-pool-pick-btn, .tr-btn-mark, .tr-booked-clear, .tr-btn-change, .tr-filter-chip, .tr-btn-pick-suggestion, .tr-btn-promote')) {
+        setTimeout(() => { rebuildTimeline(); syncDayCards(); syncCondensedDinners(); }, 0);
+      }
+    });
+    // Keyboard activation on .tr-tier-row (it's an li with role="button") must also trigger sync
+    diningMount.addEventListener('keyup', (e) => {
+      if ((e.key === 'Enter' || e.key === ' ') && e.target.closest('.tr-tier-row')) {
+        setTimeout(() => { rebuildTimeline(); syncDayCards(); syncCondensedDinners(); }, 0);
+      }
+    });
+    // Cross-tab + cross-device storage updates
+    window.addEventListener('storage', (e) => {
+      if (e.key && e.key.startsWith(STORAGE_KEY + '-')) {
+        rebuildTimeline(); syncDayCards(); syncCondensedDinners();
+      }
+    });
+
+    const resetBtn = document.getElementById('tr-reset-btn');
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (!confirm('Clear all your restaurant picks, bookings, and notes on this device?')) return;
+        ['picks','bookings','notes','party','picks-seeded','customs'].forEach(suffix => {
+          try { localStorage.removeItem(`${STORAGE_KEY}-${suffix}`); } catch(_){}
+        });
+        location.reload();
+      });
+    }
+  })();
+</script>
+
+<!-- Service worker for offline support — travelers keep a working itinerary in Bandelier / balloon launch dead zones. -->
+<script>
+  // Service worker registration with auto-update + self-heal.
+  //
+  // History of broken updates:
+  //   - SW served stale JS even after cache-bust because fetch handler used
+  //     ignoreSearch:true on versioned assets. Fixed in sw.js.
+  //   - On update, controllerchange fired but never reloaded the page, so
+  //     the user kept seeing the old shell until they killed the PWA.
+  //   - CACHE_VERSION never bumped on deploy. Now auto-bumped by the
+  //     auto-cache-bust workflow alongside ?v= rewrites.
+  //
+  // Self-heal: on every load, compare the page's ?v= cache-bust stamp
+  // against the SW's reported CACHE_VERSION. If they don't match, the SW
+  // is stale — force an unregister + reload so the user gets fresh code
+  // without deleting and reinstalling the PWA.
+  if ('serviceWorker' in navigator) {
+    // Pull the cache-bust stamp from this very page's URL params on its
+    // own asset references. We injected v=20260531-<sha> on every asset.
+    const pageStamp = (function () {
+      const link = document.querySelector('script[src*="?v="], link[href*="?v="]');
+      if (!link) return null;
+      const src = link.getAttribute('src') || link.getAttribute('href') || '';
+      const m = src.match(/[?&]v=([^&"'\s]+)/);
+      return m ? m[1] : null;
+    })();
+
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js', { scope: '/' })
+        .then((reg) => {
+          // Force an update check on every load.
+          reg.update().catch(() => {});
+
+          // If a SW is already waiting, activate it immediately.
+          if (reg.waiting) reg.waiting.postMessage('SKIP_WAITING');
+
+          // When a new SW is installing, skip-waiting as soon as it's installed.
+          reg.addEventListener('updatefound', () => {
+            const nw = reg.installing;
+            if (!nw) return;
+            nw.addEventListener('statechange', () => {
+              if (nw.state === 'installed' && navigator.serviceWorker.controller) {
+                nw.postMessage('SKIP_WAITING');
+              }
+            });
+          });
+
+          // Self-heal: ask the active SW for its CACHE_VERSION. If it doesn't
+          // end with the same stamp the page is using, the SW is stale.
+          // Unregister + hard reload so the next load brings everything fresh.
+          if (pageStamp && navigator.serviceWorker.controller) {
+            try {
+              const chan = new MessageChannel();
+              chan.port1.onmessage = (e) => {
+                const swVersion = String(e.data || '');
+                if (!swVersion.endsWith(pageStamp)) {
+                  console.warn('[sw] version mismatch', { page: pageStamp, sw: swVersion });
+                  if (sessionStorage.getItem('sw-self-heal-attempted') === '1') return;
+                  sessionStorage.setItem('sw-self-heal-attempted', '1');
+                  reg.unregister().then(() => location.reload());
+                } else {
+                  sessionStorage.removeItem('sw-self-heal-attempted');
+                }
+              };
+              navigator.serviceWorker.controller.postMessage('GET_VERSION', [chan.port2]);
+            } catch (e) { /* non-fatal */ }
+          }
+        })
+        .catch((err) => { console.warn('SW reg failed', err); });
+
+      // When the new SW takes control, reload the page once so the user
+      // immediately sees the fresh build instead of yesterday's shell.
+      let reloading = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (reloading) return;
+        // First-install case: no prior controller. Don't reload on first install.
+        if (!navigator.serviceWorker.controller) return;
+        reloading = true;
+        location.reload();
+      });
+    });
+  }
+</script>
+
+<!-- REQUEST-A-CHANGE form handler.
+     Opens the user's mail app with a pre-filled message to the trip
+     planner (demo@barrierislanddigital.com). Adds device + page context so the
+     planner sees which trip and screen the request came from. No backend
+     dependency — works offline (the mail will queue and send when online).
+-->
+<script>
+(function () {
+  var form = document.getElementById('req-form');
+  if (!form) return;
+  var input = document.getElementById('req-text');
+  var status = document.getElementById('req-status');
+  var btn = form.querySelector('.req-send');
+  var TO = 'demo@barrierislanddigital.com';
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var msg = (input.value || '').trim();
+    if (!msg) {
+      status.textContent = 'Type a request first.';
+      status.classList.add('error');
+      input.focus();
+      return;
+    }
+    status.classList.remove('error');
+    var now = new Date();
+    var stamp = now.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+    var ua = (navigator.userAgent || '').slice(0, 200);
+    var subject = 'Santa Fe trip — change request';
+    var body = msg
+      + '\n\n---'
+      + '\nSent from Santa Fe demo'
+      + '\nTime: ' + stamp
+      + '\nDevice: ' + ua;
+    var href = 'mailto:' + TO
+      + '?subject=' + encodeURIComponent(subject)
+      + '&body=' + encodeURIComponent(body);
+    // Save locally too so it's never lost if mail app fails to open.
+    try {
+      var k = 'santafe-requests';
+      var log = JSON.parse(localStorage.getItem(k) || '[]');
+      log.push({ t: now.toISOString(), msg: msg });
+      localStorage.setItem(k, JSON.stringify(log.slice(-50)));
+    } catch (_) {}
+    btn.disabled = true;
+    status.textContent = 'Opening your mail app…';
+    // Defer so the status text paints before the mailto navigates away.
+    setTimeout(function () {
+      window.location.href = href;
+      setTimeout(function () {
+        btn.disabled = false;
+        status.textContent = 'Sent. Thanks — I’ll get it shortly.';
+        input.value = '';
+      }, 600);
+    }, 60);
+  });
+})();
+</script>
+
+</body>
+</html>
