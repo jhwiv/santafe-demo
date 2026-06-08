@@ -1366,7 +1366,7 @@
   // Auto-fetches on page load + every visibilitychange (so opening the PWA
   // re-checks instantly). Cache is at the edge (3 min) so polling is cheap.
   // Silently no-ops if the Worker is unreachable (offline, deploy gap).
-  const FLIGHT_STATUS_ENDPOINT = 'https://flight-status.jhwiv-online.workers.dev/';
+  const FLIGHT_STATUS_ENDPOINT = ''; // disabled in demo build (no backend)
   const LIVE_STATUS_LABELS = {
     sched:   { bg: '#eff6ff', fg: '#1e40af', label: 'Sched' },
     ontime:  { bg: '#dcfce7', fg: '#166534', label: 'On Time' },
